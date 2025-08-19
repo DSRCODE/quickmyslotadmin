@@ -14,6 +14,7 @@ import Property from "./pages/Property/Property";
 import Ads from "./pages/Ads/Ads";
 import Tickets from "./pages/Tickets/Tickets";
 import ForgotPassword from "./pages/AuthPages/ForgotPassword";
+import Customer from "./pages/Customers/Cutomers";
 
 export default function App() {
   return (
@@ -24,7 +25,7 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
-            <Route index path="/users" element={<User />} />
+            <Route index path="/customer" element={<Customer />} />
             <Route index path="/property" element={<Property />} />
             <Route index path="/ads" element={<Ads />} />
             <Route index path="/tickets" element={<Tickets />} />
