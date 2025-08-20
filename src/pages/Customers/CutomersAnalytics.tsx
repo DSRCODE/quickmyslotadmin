@@ -11,36 +11,36 @@ const initialUsers = [
   {
     id: 1,
     name: "Saloon",
-    total: "85",
+    // total: "85",
   },
   {
     id: 2,
     name: "Health Care",
-    total: "75",
+    // total: "75",
   },
   {
     id: 3,
     name: "Spa",
-    total: "5",
+    // total: "5",
   },
   {
     id: 4,
     name: "Pet Clinic",
-    total: "40",
+    // total: "40",
   },
   {
     id: 5,
     name: "Automotive Car",
-    total: "60",
+    // total: "60",
   },
   {
     id: 6,
     name: "Retail/Designer",
-    total: "35",
+    // total: "35",
   },
 ];
 
-const Customer = () => {
+const CutomersAnalytics = () => {
   const [users, setUsers] = useState(initialUsers);
 
   function getPercentColor(percent: string) {
@@ -110,7 +110,7 @@ const Customer = () => {
       </section>
 
       {/* Appointment Status Section */}
-      <section className="border rounded-xl shadow-sm p-5 mb-4 bg-white flex flex-col">
+      {/* <section className="border rounded-xl shadow-sm p-5 mb-4 bg-white flex flex-col">
         <h3 className="font-semibold text-lg mb-5">Appointment Status</h3>
         <div className="flex flex-col gap-4">
           {appointmentStatusItems.map(({ icon, percent, label }) => (
@@ -127,12 +127,12 @@ const Customer = () => {
         <button className="mt-6 bg-blue-100 hover:bg-blue-200 transition-colors text-blue-700 font-semibold py-2 px-4 rounded-lg w-full">
           Export Appointment Status CSV
         </button>
-      </section>
+      </section> */}
 
       <section className="border rounded-xl shadow-sm p-5 mb-5 bg-white flex flex-col">
         <h3 className="font-semibold text-lg mb-5">Popular Categories</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {users.map(({ id, name, total }) => (
+          {users.map(({ id, name }) => (
             <div
               key={id}
               className="border rounded-lg p-4 shadow-sm flex flex-col justify-center"
@@ -141,13 +141,13 @@ const Customer = () => {
               <span className="font-bold text-xl text-[#7C0902] mt-1">
                 {name}
               </span>
-              <span className="text-gray-600 text-sm mt-2">Percent</span>
-              <span
+              {/* <span className="text-gray-600 text-sm mt-2">Percent</span> */}
+              {/* <span
                 className="font-semibold text-lg mt-1"
                 style={{ color: getPercentColor(total) }}
               >
                 {total} %
-              </span>
+              </span> */}
             </div>
           ))}
         </div>
@@ -159,4 +159,4 @@ const Customer = () => {
   );
 };
 
-export default Customer;
+export default CutomersAnalytics;

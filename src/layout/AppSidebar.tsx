@@ -10,62 +10,99 @@ import {
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import {
-  ListCheckIcon,
-  ListChecksIcon,
+  LayoutDashboard,
+  Users,
+  Briefcase,
+  FileStack,
+  BarChart,
+  UserCircle,
+  ListOrdered,
+  Settings,
+  Image,
+  FileText,
   LogOutIcon,
-  Settings2,
-  Settings2Icon,
-  TableProperties,
-  Ticket,
-  TvIcon,
-  User,
-  User2Icon,
-  UserCircleIcon,
-  Warehouse,
+  Building,
 } from "lucide-react";
 
 type NavItem = {
   name: string;
   icon: React.ReactNode;
   path?: string;
-  subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
+  subItems?: {
+    name: string;
+    icon: React.ReactNode;
+    path: string;
+    pro?: boolean;
+    new?: boolean;
+  }[];
 };
 
 const navItems: NavItem[] = [
-  // {
-  //   icon: <GridIcon />,
-  //   name: "Dashboard",
-  //   subItems: [{ name: "Ecommerce", path: "/", pro: false }],
-  // },
   {
-    icon: <GridIcon />,
+    icon: <LayoutDashboard />,
     name: "Dashboard",
     path: "/",
   },
   {
-    icon: <User />,
-    name: "Customers Analytics",
-    path: "/customer",
+    icon: <Users />,
+    name: "Customer",
+    subItems: [
+      {
+        name: "Customer Management",
+        icon: <FileStack />,
+        path: "/customer-management",
+        pro: false,
+      },
+      {
+        name: "Cutomer Analytics",
+        icon: <Users />,
+        path: "/customer-analytics",
+        pro: false,
+      },
+    ],
   },
   {
-    icon: <TableProperties />,
-    name: "Providers Analytics",
-    path: "/provider",
+    icon: <Briefcase />,
+    name: "Provider",
+    subItems: [
+      {
+        name: "Provider Management",
+        icon: <Building />,
+        path: "/providers-management",
+        pro: false,
+      },
+      {
+        name: "Provider Analytics",
+        icon: <Briefcase />,
+        path: "/providers-analytics",
+        pro: false,
+      },
+    ],
   },
+
   {
-    icon: <UserCircleIcon />,
-    name: "User Engagement",
-    path: "/user",
+    icon: <FileStack />,
+    name: "Orders",
+    path: "/orders",
   },
+
+  // {
+  //   icon: <UserCircle />,
+  //   name: "User Engagement",
+  //   path: "/user",
+  // },
   {
-    icon: <ListChecksIcon />,
+    icon: <ListOrdered />,
     name: "Category Performance",
     path: "/category",
   },
   {
-    icon: <Settings2Icon />,
+    icon: <Settings />,
     name: "App Settings",
-    path: "/settings",
+    subItems: [
+      { name: "Banner", icon: <Image />, path: "/ads", pro: false },
+      { name: "CMS", icon: <FileText />, path: "/cms", pro: false },
+    ],
   },
 ];
 
@@ -137,17 +174,17 @@ const AppSidebar: React.FC = () => {
       >
         <Link to="/">
           {isExpanded || isHovered || isMobileOpen ? (
-            <div className="flex items-center gap-2 text-primary font-bold text-xl">
+            <div className="flex  gap-2 items-center text-primary font-bold text-[16px]">
               <img
                 className="dark:hidden"
                 src="/logo.png"
                 alt="Logo"
-                width={60}
-                height={30}
+                width={100}
+                height={40}
               />
               <div>
                 <span className="tracking-wide text-[#FE4C8A] ">QUICK</span>
-                <span className="tracking-wide  text-[#090A14] ">my</span>
+                <span className="tracking-wide  text-[#090A14] ">MY</span>
                 <span className="tracking-wide  text-[#090A14] ">SLOT</span>
               </div>
             </div>
@@ -257,11 +294,11 @@ const AppSidebar: React.FC = () => {
                             to={subItem.path}
                             className={`menu-dropdown-item ${
                               isActive(subItem.path)
-                                ? "menu-dropdown-item-active"
+                                ? "text-[#fff] bg-[#FF4D8B]"
                                 : "menu-dropdown-item-inactive"
                             }`}
                           >
-                            {subItem.name}
+                            {subItem.icon} {subItem.name}
                           </Link>
                         </li>
                       ))}

@@ -21,7 +21,7 @@ const Ads = () => {
   ]);
 
   // Add image handler from Upload component
-  const handleAdd = ( file:any) => {
+  const handleAdd = (file: any) => {
     // Simulate upload and add to ads list
     if (!file) return;
 
@@ -35,7 +35,7 @@ const Ads = () => {
   };
 
   // Delete ad by id
-  const handleDelete = (id:any) => {
+  const handleDelete = (id: any) => {
     setAds((prev) => prev.filter((ad) => ad.id !== id));
     message.success("Ad banner deleted!");
   };
@@ -55,8 +55,11 @@ const Ads = () => {
       >
         <Button
           icon={<UploadOutlined />}
-          type="primary"
-          style={{ marginBottom: 20 }}
+          style={{
+            marginBottom: 20,
+            backgroundColor: "#465FFF",
+            color: "#fff",
+          }}
         >
           Add Image (Banner)
         </Button>

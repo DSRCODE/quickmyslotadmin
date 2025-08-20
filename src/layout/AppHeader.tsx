@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useSidebar } from "../context/SidebarContext";
 import { PaintRoller, UserCircle, Warehouse } from "lucide-react";
+import { Tooltip } from "antd";
 // import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 // import NotificationDropdown from "../components/header/NotificationDropdown";
 
 const AppHeader: React.FC = () => {
+  const navigate = useNavigate();
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
@@ -94,14 +96,23 @@ const AppHeader: React.FC = () => {
               />
               <div>
                 <span className="tracking-wide text-[#FE4C8A] ">QUICK</span>
-                <span className="tracking-wide  text-[#090A14] ">my</span>
+                <span className="tracking-wide  text-[#090A14] ">MY</span>
                 <span className="tracking-wide  text-[#090A14] ">SLOT</span>
               </div>
             </div>
           </Link>
 
           <div className="flex justify-end w-full">
-            <img src="/logo.png" alt="" height={32} width={40} className="cursor-pointer"/>
+            <Tooltip title="Profile">
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5PABjXc17cjIMOibECLM7ppDwMmiDg6Dw&s"
+                alt=""
+                height={40}
+                width={40}
+                className="cursor-pointer rounded-full"
+                onClick={() => navigate("/profile")}
+              />
+            </Tooltip>
           </div>
         </div>
         {/* <div

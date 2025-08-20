@@ -15,6 +15,14 @@ import Ads from "./pages/Ads/Ads";
 import Tickets from "./pages/Tickets/Tickets";
 import ForgotPassword from "./pages/AuthPages/ForgotPassword";
 import Customer from "./pages/Customers/Cutomers";
+import CutomersAnalytics from "./pages/Customers/CutomersAnalytics";
+import CustomerManagement from "./pages/Customers/CustomerManagement";
+import ProvidersManagement from "./pages/Providers/ProvidersManagement";
+import ProvidersAnalytics from "./pages/Providers/ProvidersAnalytics";
+import Orders from "./pages/Orders/Orders";
+import PrivacyPolicyPage from "./pages/CMS/CMS";
+import ProviderDetails from "./pages/Providers/ProviderDetails";
+import CustomerDetails from "./pages/Customers/CustomerDetails ";
 
 export default function App() {
   return (
@@ -25,9 +33,40 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
-            <Route index path="/customer" element={<Customer />} />
-            <Route index path="/property" element={<Property />} />
+            <Route
+              index
+              path="/customer-analytics"
+              element={<CutomersAnalytics />}
+            />
+            <Route
+              index
+              path="/customer-management"
+              element={<CustomerManagement />}
+            />
+            <Route
+              index
+              path="/customer-details"
+              element={<CustomerDetails />}
+            />
+            <Route
+              index
+              path="/providers-management"
+              element={<ProvidersManagement />}
+            />
+            <Route
+              index
+              path="/providers-analytics"
+              element={<ProvidersAnalytics />}
+            />
+            <Route
+              index
+              path="/providers-details"
+              element={<ProviderDetails />}
+            />
+            <Route index path="/orders" element={<Orders />} />
             <Route index path="/ads" element={<Ads />} />
+            <Route path="/cms" element={<PrivacyPolicyPage />} />
+
             <Route index path="/tickets" element={<Tickets />} />
 
             {/* Others Page */}
