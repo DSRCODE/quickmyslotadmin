@@ -91,11 +91,11 @@ const navItems: NavItem[] = [
   //   name: "User Engagement",
   //   path: "/user",
   // },
-  {
-    icon: <ListOrdered />,
-    name: "Category Performance",
-    path: "/category",
-  },
+  // {
+  //   icon: <ListOrdered />,
+  //   name: "Category Performance",
+  //   path: "/category",
+  // },
   {
     icon: <Settings />,
     name: "App Settings",
