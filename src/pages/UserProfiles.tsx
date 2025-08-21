@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
+import { Edit } from "lucide-react";
 
 export default function UserProfiles() {
-  // Sample user data - replace with real data or props
-  const user = {
+  const userInitial = {
     fullName: "John Doe",
     username: "johndoe123",
     email: "john.doe@example.com",
@@ -21,29 +21,34 @@ export default function UserProfiles() {
     ],
   };
 
-  // State for modal visibility
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState(userInitial);
 
-  // Form state inside modal
+  // Modal visibility & mode state ('password' or 'profilePic')
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState("password"); // 'password' or 'profilePic'
+
+  // Password form state & errors
   const [passwordData, setPasswordData] = useState({
     newPassword: "",
     confirmPassword: "",
   });
-
-  // Error state for validation
   const [errors, setErrors] = useState({
     newPassword: "",
     confirmPassword: "",
   });
 
-  // Handle input change
-  const handleChange = (e) => {
+  // Profile picture file state & preview
+  const [newProfilePic, setNewProfilePic] = useState(null);
+  const [previewPic, setPreviewPic] = useState(null);
+
+  // Handle input change for password modal
+  const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Validate and submit new password
-  const handleSubmit = (e) => {
+  const handlePasswordSubmit = (e) => {
     e.preventDefault();
 
     let valid = true;
@@ -60,15 +65,61 @@ export default function UserProfiles() {
     }
 
     setErrors(tempErrors);
-
     if (!valid) return;
 
-    // Submit password changes here (e.g., call API)
+    // Submit password changes here (e.g., API)
+
     console.log("New password submitted:", passwordData.newPassword);
 
-    // Close modal and reset password data
+    // Close modal and reset
     setIsModalOpen(false);
     setPasswordData({ newPassword: "", confirmPassword: "" });
+    setErrors({ newPassword: "", confirmPassword: "" });
+  };
+
+  // Handle file input change for profile pic
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewProfilePic(file);
+      setPreviewPic(URL.createObjectURL(file));
+    }
+  };
+
+  // Submit new profile picture
+  const handleProfilePicSubmit = (e) => {
+    e.preventDefault();
+    if (!newProfilePic) return;
+
+    // Normally, upload to server and get URL
+    // Here, we use previewPic as new profile picture URL for demo
+    setUser((prev) => ({ ...prev, profilePicture: previewPic }));
+
+    // Reset modal state
+    setIsModalOpen(false);
+    setNewProfilePic(null);
+    setPreviewPic(null);
+  };
+
+  // Open modal with mode and reset modal-specific states
+  const openModal = (mode) => {
+    setModalMode(mode);
+    setIsModalOpen(true);
+    // Reset modal content states
+    setPasswordData({ newPassword: "", confirmPassword: "" });
+    setErrors({ newPassword: "", confirmPassword: "" });
+    setNewProfilePic(null);
+    setPreviewPic(null);
+  };
+
+  // Close modal and reset preview URL if any
+  const closeModal = () => {
+    setIsModalOpen(false);
+    if (previewPic) {
+      URL.revokeObjectURL(previewPic);
+      setPreviewPic(null);
+      setNewProfilePic(null);
+    }
     setErrors({ newPassword: "", confirmPassword: "" });
   };
 
@@ -77,9 +128,18 @@ export default function UserProfiles() {
       <PageBreadcrumb pageTitle="User Profile" />
 
       <div className="max-w-6xl mx-auto rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
-        <h3 className="mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-          Profile Details
-        </h3>
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            Profile Details
+          </h3>
+          {/* Edit button for profile pic */}
+          <button
+            onClick={() => openModal("profilePic")}
+            className="px-4 py-2 bg-blue-500 text-white rounded font-semibold hover:bg-[#FE4C8A] transition-colors text-sm"
+          >
+           <Edit/>
+          </button>
+        </div>
 
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Left: Profile Picture and Basic Info */}
@@ -144,13 +204,15 @@ export default function UserProfiles() {
                 </div>
               </div>
             </section>
+
             {/* Forgot Password Button */}
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => openModal("password")}
               className="mt-6 px-4 py-2 bg-blue-500 text-white rounded font-semibold hover:bg-[#FE4C8A] transition-colors text-sm"
             >
               Forgot Password
             </button>
+
             {/* Contact Details */}
             {/* <section>
               <h4 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">
@@ -191,72 +253,130 @@ export default function UserProfiles() {
       {isModalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 bg-opacity-50"
-          onClick={() => setIsModalOpen(false)}
+          onClick={closeModal}
         >
           <div
             className="bg-white rounded-lg p-6 max-w-md w-full relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="mb-4 text-xl font-semibold text-gray-900">
-              Set New Password
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  name="newPassword"
-                  value={passwordData.newPassword}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#7C0902] ${
-                    errors.newPassword ? "border-red-600" : "border-gray-300"
-                  }`}
-                />
-                {errors.newPassword && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.newPassword}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={passwordData.confirmPassword}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#7C0902] ${
-                    errors.confirmPassword
-                      ? "border-red-600"
-                      : "border-gray-300"
-                  }`}
-                />
-                {errors.confirmPassword && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.confirmPassword}
-                  </p>
-                )}
-              </div>
-              <div className="flex justify-end gap-3 mt-6">
-                <button
-                  type="button"
-                  className="py-2 px-4 rounded border border-gray-300 hover:bg-gray-100 transition"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-[#FE4C8A] transition"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
+            {modalMode === "password" && (
+              <>
+                <h3 className="mb-4 text-xl font-semibold text-gray-900">
+                  Set New Password
+                </h3>
+                <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      name="newPassword"
+                      value={passwordData.newPassword}
+                      onChange={handlePasswordChange}
+                      className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#7C0902] ${
+                        errors.newPassword
+                          ? "border-red-600"
+                          : "border-gray-300"
+                      }`}
+                    />
+                    {errors.newPassword && (
+                      <p className="text-red-600 text-sm mt-1">
+                        {errors.newPassword}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Confirm Password
+                    </label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={passwordData.confirmPassword}
+                      onChange={handlePasswordChange}
+                      className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#7C0902] ${
+                        errors.confirmPassword
+                          ? "border-red-600"
+                          : "border-gray-300"
+                      }`}
+                    />
+                    {errors.confirmPassword && (
+                      <p className="text-red-600 text-sm mt-1">
+                        {errors.confirmPassword}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex justify-end gap-3 mt-6">
+                    <button
+                      type="button"
+                      className="py-2 px-4 rounded border border-gray-300 hover:bg-gray-100 transition"
+                      onClick={closeModal}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-[#FE4C8A] transition"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+            {modalMode === "profilePic" && (
+              <>
+                <h3 className="mb-4 text-xl font-semibold text-gray-900">
+                  Change Profile Picture
+                </h3>
+                <form onSubmit={handleProfilePicSubmit} className="space-y-4">
+                  <div>
+                    {previewPic ? (
+                      <img
+                        src={previewPic}
+                        alt="Preview"
+                        className="mb-4 h-32 w-32 rounded-full object-cover shadow-md"
+                      />
+                    ) : (
+                      <img
+                        src={user.profilePicture}
+                        alt="Current Profile"
+                        className="mb-4 h-32 w-32 rounded-full object-cover shadow-md"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="w-full border rounded-sm px-4 py-2 cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex justify-end gap-3 mt-6">
+                    <button
+                      type="button"
+                      className="py-2 px-4 rounded border border-gray-300 hover:bg-gray-100 transition"
+                      onClick={closeModal}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={!newProfilePic}
+                      className={`py-2 px-4 rounded ${
+                        newProfilePic
+                          ? "bg-blue-500 text-white hover:bg-[#FE4C8A]"
+                          : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                      } font-semibold transition`}
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
           </div>
         </div>
       )}
