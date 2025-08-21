@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Table,
   Button,
@@ -9,9 +9,11 @@ import {
   Input,
   Select,
   Tag,
+  Row,
+  Col,
 } from "antd";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import { Delete, DeleteIcon, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
 
 const { Option } = Select;
@@ -23,6 +25,7 @@ const initialUsers = [
     email: "john@example.com",
     phone: "+91xxxxxxxxx78",
     status: "Active",
+    approved: false,
   },
   {
     id: 2,
@@ -30,6 +33,7 @@ const initialUsers = [
     email: "jane@example.com",
     phone: "+91xxxxxxxxx78",
     status: "Inactive",
+    approved: false,
   },
   {
     id: 3,
@@ -37,6 +41,7 @@ const initialUsers = [
     email: "michael@example.com",
     phone: "+91xxxxxxxxx78",
     status: "Active",
+    approved: true,
   },
   {
     id: 4,
@@ -44,6 +49,7 @@ const initialUsers = [
     email: "emily@example.com",
     phone: "+91xxxxxxxxx78",
     status: "Active",
+    approved: false,
   },
   {
     id: 5,
@@ -51,6 +57,7 @@ const initialUsers = [
     email: "william@example.com",
     phone: "+91xxxxxxxxx78",
     status: "Inactive",
+    approved: true,
   },
 ];
 
@@ -60,12 +67,15 @@ const CustomerManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
 
-  const handleDelete = (id: number) => {
+  const [searchText, setSearchText] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+
+  const handleDelete = (id) => {
     setUsers((prev) => prev.filter((user) => user.id !== id));
     message.success("User deleted successfully");
   };
 
-  const handleToggleStatus = (id: number) => {
+  const handleToggleStatus = (id) => {
     setUsers((prev) =>
       prev.map((user) =>
         user.id === id
@@ -79,10 +89,25 @@ const CustomerManagement = () => {
     message.success("User status updated");
   };
 
+  const handleApprove = (id) => {
+    setUsers((prev) =>
+      prev.map((user) => (user.id === id ? { ...user, approved: true } : user))
+    );
+    message.success("User approved");
+  };
+
+  const handleDisapprove = (id) => {
+    setUsers((prev) =>
+      prev.map((user) => (user.id === id ? { ...user, approved: false } : user))
+    );
+    message.success("User disapproved");
+  };
+
   const handleAddUser = () => {
     form.validateFields().then((values) => {
       const newUser = {
         id: users.length ? Math.max(...users.map((u) => u.id)) + 1 : 1,
+        approved: false,
         ...values,
       };
       setUsers((prev) => [...prev, newUser]);
@@ -92,6 +117,24 @@ const CustomerManagement = () => {
     });
   };
 
+  // Filter users by search and status filter
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      // Filter by status
+      if (statusFilter !== "All" && user.status !== statusFilter) return false;
+      // Filter by search text in name, email, or phone
+      const lowerSearch = searchText.toLowerCase();
+      if (
+        !user.name.toLowerCase().includes(lowerSearch) &&
+        !user.email.toLowerCase().includes(lowerSearch) &&
+        !user.phone.toLowerCase().includes(lowerSearch)
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }, [users, searchText, statusFilter]);
+
   const columns = [
     {
       title: "Name",
@@ -100,7 +143,7 @@ const CustomerManagement = () => {
       render: (text, record) => (
         <a
           style={{ color: "#465FFF", cursor: "pointer" }}
-          onClick={() => navigate(`/customer-details`)}
+          onClick={() => navigate(`/customer-details/${record.id}`)} // Navigate with user ID if needed
         >
           {text}
         </a>
@@ -121,28 +164,64 @@ const CustomerManagement = () => {
         { text: "Active", value: "Active" },
         { text: "Inactive", value: "Inactive" },
       ],
-      onFilter: (value: any, record: any) => record.status === value,
-      render: (status: string) => (
+      onFilter: (value, record) => record.status === value,
+      render: (status) => (
         <Tag color={status === "Active" ? "green" : "volcano"}>{status}</Tag>
       ),
     },
     {
+      title: "Approval",
+      dataIndex: "approved",
+      render: (approved) =>
+        approved ? (
+          <Tag color="blue">Approved</Tag>
+        ) : (
+          <Tag color="default">Not Approved</Tag>
+        ),
+      filters: [
+        { text: "Approved", value: true },
+        { text: "Not Approved", value: false },
+      ],
+      onFilter: (value, record) => record.approved === value,
+    },
+    {
       title: "Action",
       key: "action",
-      render: (_: any, record: any) => (
-        <div style={{ display: "flex", gap: "8px" }}>
+      render: (_, record) => (
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
           <Button
             type="default"
             style={{
               backgroundColor:
                 record.status === "Inactive" ? "#00A86B" : "#E23D28",
               color: "white",
-              width: "100px",
+              width: "110px",
+              whiteSpace: "nowrap",
             }}
             onClick={() => handleToggleStatus(record.id)}
           >
             {record.status === "Active" ? "Deactivate" : "Activate"}
           </Button>
+
+          {record.approved ? (
+            <Button
+              type="default"
+              danger
+              style={{ width: "110px", whiteSpace: "nowrap" }}
+              onClick={() => handleDisapprove(record.id)}
+            >
+              Disapprove
+            </Button>
+          ) : (
+            <Button
+              type="primary"
+              style={{ width: "110px", whiteSpace: "nowrap" }}
+              onClick={() => handleApprove(record.id)}
+            >
+              Approve
+            </Button>
+          )}
+
           <Popconfirm
             title="Are you sure to delete this user?"
             onConfirm={() => handleDelete(record.id)}
@@ -150,12 +229,10 @@ const CustomerManagement = () => {
             cancelText="No"
           >
             <Button
-              style={{ backgroundColor: "red", color: "white", width: "100px" }}
+              style={{ backgroundColor: "red", color: "white", width: "70px" }}
               type="link"
               icon={<Trash2 size={16} />}
-            >
-              Delete
-            </Button>
+            />
           </Popconfirm>
         </div>
       ),
@@ -166,24 +243,57 @@ const CustomerManagement = () => {
     <div>
       <PageBreadcrumb pageTitle="Customers Management" />
 
-      {/* Add Button */}
-      {/* <div className="flex justify-end mb-4">
-        <Button
-          onClick={() => setIsModalOpen(true)}
-          className="w-full sm:w-auto"
-          style={{
-            marginBottom: 20,
-            backgroundColor: "#465FFF",
-            color: "#fff",
-          }}
+      {/* Search and Status Filter Row */}
+      <Row
+        gutter={[16, 16]}
+        className="mb-4"
+        justify="space-between"
+        align="middle"
+      >
+        <Col xs={24} sm={14} md={12} lg={10} xl={8}>
+          <Input.Search
+            placeholder="Search by name, email or phone"
+            allowClear
+            onChange={(e) => setSearchText(e.target.value)}
+            value={searchText}
+            enterButton
+            onSearch={(val) => setSearchText(val)}
+          />
+        </Col>
+
+        <Col xs={24} sm={10} md={6} lg={5} xl={4}>
+          <Select
+            value={statusFilter}
+            onChange={(value) => setStatusFilter(value)}
+            style={{ width: "100%" }}
+          >
+            <Option value="All">All Status</Option>
+            <Option value="Active">Active</Option>
+            <Option value="Inactive">Inactive</Option>
+          </Select>
+        </Col>
+
+        {/* <Col
+          xs={24}
+          sm={24}
+          md={6}
+          lg={5}
+          xl={6}
+          style={{ textAlign: "right" }}
         >
-          + Add User
-        </Button>
-      </div> */}
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            type="primary"
+            style={{ backgroundColor: "#465FFF", borderColor: "#465FFF" }}
+          >
+            + Add User
+          </Button>
+        </Col> */}
+      </Row>
 
       <Table
         columns={columns}
-        dataSource={users}
+        dataSource={filteredUsers}
         rowKey="id"
         pagination={{
           pageSizeOptions: ["5", "10", "15"],
@@ -226,10 +336,13 @@ const CustomerManagement = () => {
             label="Phone"
             rules={[
               { required: true, message: "Please enter phone" },
-              { type: "number", message: "Enter a valid phone number." },
+              {
+                pattern: /^[0-9+()\- ]+$/,
+                message: "Enter a valid phone number.",
+              },
             ]}
           >
-            <Input placeholder="Enter email" />
+            <Input placeholder="Enter phone" />
           </Form.Item>
 
           <Form.Item
