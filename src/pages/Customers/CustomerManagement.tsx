@@ -203,7 +203,8 @@ const CustomerManagement = () => {
             {record.status === "Active" ? "Deactivate" : "Activate"}
           </Button>
 
-          {record.approved ? (
+          {/* 
+ {record.approved ? (
             <Button
               type="default"
               danger
@@ -221,7 +222,7 @@ const CustomerManagement = () => {
               Approve
             </Button>
           )}
-
+*/}
           <Popconfirm
             title="Are you sure to delete this user?"
             onConfirm={() => handleDelete(record.id)}
