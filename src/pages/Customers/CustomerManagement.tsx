@@ -169,21 +169,7 @@ const CustomerManagement = () => {
         <Tag color={status === "Active" ? "green" : "volcano"}>{status}</Tag>
       ),
     },
-    {
-      title: "Approval",
-      dataIndex: "approved",
-      render: (approved) =>
-        approved ? (
-          <Tag color="blue">Approved</Tag>
-        ) : (
-          <Tag color="default">Not Approved</Tag>
-        ),
-      filters: [
-        { text: "Approved", value: true },
-        { text: "Not Approved", value: false },
-      ],
-      onFilter: (value, record) => record.approved === value,
-    },
+
     {
       title: "Action",
       key: "action",

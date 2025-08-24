@@ -20,6 +20,10 @@ import Orders from "./pages/Orders/Orders";
 import PrivacyPolicyPage from "./pages/CMS/CMS";
 import ProviderDetails from "./pages/Providers/ProviderDetails";
 import CustomerDetails from "./pages/Customers/CustomerDetails ";
+import Transaction from "./pages/Transaction/Transaction";
+import NotifyMessages from "./pages/Notification/NotifyMessages";
+import WhatsAppMedia from "./pages/Whatsapp/WhatsAppMedia";
+import Mail from "./pages/Email/Mail";
 
 export default function App() {
   return (
@@ -61,6 +65,10 @@ export default function App() {
               element={<ProviderDetails />}
             />
             <Route index path="/orders" element={<Orders />} />
+            <Route index path="/transaction" element={<Transaction />} />
+            <Route index path="/notification" element={<NotifyMessages />} />
+            <Route index path="/media" element={<WhatsAppMedia />} />
+            <Route index path="/mail" element={<Mail />} />
             <Route index path="/ads" element={<Ads />} />
             <Route path="/cms" element={<PrivacyPolicyPage />} />
 

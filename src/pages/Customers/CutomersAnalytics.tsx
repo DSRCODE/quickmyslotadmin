@@ -38,6 +38,11 @@ const initialUsers = [
     name: "Retail/Designer",
     // total: "35",
   },
+  {
+    id: 7,
+    name: "Tattoo/Piercing",
+    // total: "35",
+  },
 ];
 
 const CutomersAnalytics = () => {

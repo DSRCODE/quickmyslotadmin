@@ -22,6 +22,10 @@ import {
   FileText,
   LogOutIcon,
   Building,
+  NotebookText,
+  Bell,
+  Mail,
+  MessageCircle,
 } from "lucide-react";
 
 type NavItem = {
@@ -91,17 +95,20 @@ const navItems: NavItem[] = [
   //   name: "User Engagement",
   //   path: "/user",
   // },
-  // {
-  //   icon: <ListOrdered />,
-  //   name: "Category Performance",
-  //   path: "/category",
-  // },
+  {
+    icon: <NotebookText />,
+    name: "Transaction",
+    path: "/transaction",
+  },
   {
     icon: <Settings />,
     name: "App Settings",
     subItems: [
       { name: "Banner", icon: <Image />, path: "/ads", pro: false },
       { name: "CMS", icon: <FileText />, path: "/cms", pro: false },
+      { name: "Notification", icon: <Bell />, path: "/notification", pro: false },
+      { name: "Email", icon: <Mail />, path: "/mail", pro: false },
+      { name: "Whatsapp", icon: <MessageCircle />, path: "/media", pro: false },
     ],
   },
 ];
@@ -298,7 +305,10 @@ const AppSidebar: React.FC = () => {
                                 : "menu-dropdown-item-inactive"
                             }`}
                           >
-                            {subItem.icon} {subItem.name}
+                            <span className="menu-item-icon-size">
+                              {subItem.icon}
+                            </span>
+                            {subItem.name}
                           </Link>
                         </li>
                       ))}
