@@ -46,7 +46,7 @@ export default function App() {
             />
             <Route
               index
-              path="/customer-details"
+              path="/customer-details/:id"
               element={<CustomerDetails />}
             />
             <Route
@@ -61,7 +61,7 @@ export default function App() {
             />
             <Route
               index
-              path="/providers-details"
+              path="/providers-details/:id"
               element={<ProviderDetails />}
             />
             <Route index path="/orders" element={<Orders />} />

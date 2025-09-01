@@ -134,18 +134,20 @@ const ProviderDetails = () => {
       </Card>
 
       {/* Categories */}
-      <Card
-        title="Categories"
-        className="mb-6 mt-4"
-        bordered
-        headStyle={{ fontWeight: "bold", fontSize: "1.25rem" }}
-      >
-        {provider.categories.map((cat) => (
-          <Tag key={cat} color="blue" className="text-lg py-2 px-3">
-            {cat}
-          </Tag>
-        ))}
-      </Card>
+      <div className="mt-2 mb-2">
+        <Card
+          title="Categories"
+          className="mb-6 mt-4"
+          bordered
+          headStyle={{ fontWeight: "bold", fontSize: "1.25rem" }}
+        >
+          {provider.categories.map((cat) => (
+            <Tag key={cat} color="blue" className="text-lg py-2 px-3">
+              {cat}
+            </Tag>
+          ))}
+        </Card>
+      </div>
 
       {/* Revenue Summary */}
       <Row gutter={16} className="mb-6">
