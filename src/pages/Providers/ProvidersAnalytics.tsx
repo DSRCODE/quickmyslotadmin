@@ -11,32 +11,32 @@ const initialUsers = [
   {
     id: 1,
     name: "Saloon",
-    // total: "85",
+    total: "85",
   },
   {
     id: 2,
     name: "Health Care",
-    // total: "75",
+    total: "75",
   },
   {
     id: 3,
     name: "Spa",
-    // total: "5",
+    total: "5",
   },
   {
     id: 4,
     name: "Pet Clinic",
-    // total: "40",
+    total: "40",
   },
   {
     id: 5,
     name: "Automotive Car",
-    // total: "60",
+    total: "60",
   },
   {
     id: 6,
     name: "Retail/Designer",
-    // total: "35",
+    total: "35",
   },
 ];
 
@@ -56,7 +56,7 @@ const ProvidersAnalytics = () => {
     return "gray";
   }
 
-  // Customer overview items
+  //  Customer overview items
   const customerOverviewItems = [
     { label: "Total Providers Listed", value: 1750 },
     { label: "Profile Completed/In Review", value: 890 },
@@ -64,7 +64,7 @@ const ProvidersAnalytics = () => {
     { label: "Total Cancellation Charges Generated", value: "$15,670" },
   ];
 
-  // Appointment status items
+  //  Appointment status items
   const appointmentStatusItems = [
     {
       icon: <CheckCircleOutlined style={{ color: "green", fontSize: 22 }} />,
@@ -103,6 +103,26 @@ const ProvidersAnalytics = () => {
         </div>
         <button className="mt-6 bg-blue-100 hover:bg-blue-200 transition-colors text-blue-700 font-semibold py-2 px-4 rounded-lg w-full">
           Export Customer Overview CSV
+        </button>
+      </section>
+
+      {/* Appointment Status Section */}
+      <section className="border rounded-xl shadow-sm p-5 mb-4 bg-white flex flex-col">
+        <h3 className="font-semibold text-lg mb-5">Appointment Status</h3>
+        <div className="flex flex-col gap-4">
+          {appointmentStatusItems.map(({ icon, percent, label }) => (
+            <div
+              key={label}
+              className="flex items-center gap-4 p-3 bg-pink-100 rounded-lg"
+            >
+              <div>{icon}</div>
+              <div className="font-bold text-lg text-[#7C0902]">{percent}</div>
+              <div className="text-gray-700">{label}</div>
+            </div>
+          ))}
+        </div>
+        <button className="mt-6 bg-blue-100 hover:bg-blue-200 transition-colors text-blue-700 font-semibold py-2 px-4 rounded-lg w-full">
+          Export Appointment Status CSV
         </button>
       </section>
     </div>

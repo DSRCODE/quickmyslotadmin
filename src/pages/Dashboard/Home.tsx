@@ -55,11 +55,15 @@ export default function Home() {
           <EcommerceMetrics />
         </div>
 
-        {/* <div className="col-span-12 ">
-          <MonthlySalesChart />
-        </div> */}
+        <div className="col-span-12 ">
+          <MonthlySalesChart title={"Monthly Users"} />
+        </div>
 
-        <div className="col-span-12">{/* <StatisticsChart /> */}</div>
+        <div className="col-span-12">
+          <MonthlySalesChart title={"Monthly Providers"} />
+        </div>
+
+        {/* <div className="col-span-12"><StatisticsChart /></div> */}
       </div>
     </>
   );
