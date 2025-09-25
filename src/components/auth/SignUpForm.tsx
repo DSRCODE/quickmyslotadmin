@@ -101,18 +101,18 @@ export default function SignUpForm() {
                   />
                   <p className="inline-block font-normal text-gray-500 dark:text-gray-400">
                     By creating an account means you agree to the{" "}
-                    <span className="text-[#FE4C8A]  dark:text-white/90">
+                    <span className="text-[#EE4E34]  dark:text-white/90">
                       Terms and Conditions,
                     </span>{" "}
                     and our{" "}
-                    <span className="text-[#FE4C8A]  dark:text-white">
+                    <span className="text-[#EE4E34]  dark:text-white">
                       Privacy Policy
                     </span>
                   </p>
                 </div>
                 {/* <!-- Button --> */}
                 <div>
-                  <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-[#4f4981] shadow-theme-xs hover:bg-[#FE4C8A] ">
+                  <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-[#4f4981] shadow-theme-xs hover:bg-[#EE4E34] ">
                     Sign Up
                   </button>
                 </div>
@@ -124,7 +124,7 @@ export default function SignUpForm() {
                 Already have an account? {""}
                 <Link
                   to="/signin"
-                  className="text-[#FE4C8A]  hover:text-brand-600 dark:text-brand-400"
+                  className="text-[#EE4E34]  hover:text-brand-600 dark:text-brand-400"
                 >
                   Log In
                 </Link>

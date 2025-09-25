@@ -95,7 +95,7 @@ const AppHeader: React.FC = () => {
                 height={30}
               />
               <div>
-                <span className="tracking-wide text-[#FE4C8A] ">QUICK</span>
+                <span className="tracking-wide text-[#EE4E34] ">QUICK</span>
                 <span className="tracking-wide  text-[#090A14] ">MY</span>
                 <span className="tracking-wide  text-[#090A14] ">SLOT</span>
               </div>

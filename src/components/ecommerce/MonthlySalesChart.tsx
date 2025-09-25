@@ -7,7 +7,7 @@ import { useState } from "react";
 
 export default function MonthlySalesChart({ title }) {
   const options: ApexOptions = {
-    colors: ["#4f4981"],
+    colors: ["#EE4E34"],
     chart: {
       fontFamily: "Outfit, sans-serif",
       type: "bar",
@@ -131,7 +131,7 @@ export default function MonthlySalesChart({ title }) {
         </div> */}
       </div>
 
-      <div className="max-w-full overflow-x-auto custom-scrollbar">
+      <div className="max-w-full overflow-auto no-scrollbar">
         <div className="-ml-5 min-w-[850px] xl:min-w-full pl-2">
           <Chart options={options} series={series} type="bar" height={180} />
         </div>

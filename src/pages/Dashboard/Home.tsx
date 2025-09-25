@@ -26,7 +26,7 @@ export default function Home() {
               height={30}
             />
             <div>
-              <span className="tracking-wide text-2xl font-bold text-[#FE4C8A] ">
+              <span className="tracking-wide text-2xl font-bold text-[#EE4E34] ">
                 Admin
               </span>
               {/* <span className="tracking-wide  text-[#090A14] ">my</span> */}

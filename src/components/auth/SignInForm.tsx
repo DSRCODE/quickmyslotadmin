@@ -76,13 +76,13 @@ export default function SignInForm() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Checkbox checked={isChecked} onChange={setIsChecked} />
-                    <span className="block font-normal text-[#FE4C8A]  text-theme-sm dark:text-gray-400">
+                    <span className="block font-normal text-[#EE4E34]  text-theme-sm dark:text-gray-400">
                       Keep me logged in
                     </span>
                   </div>
                   <Link
                     to="/reset-password"
-                    className="text-sm text-[#4f4981] hover:text-[#FE4C8A]  dark:text-brand-400"
+                    className="text-sm text-[#4f4981] hover:text-[#EE4E34]  dark:text-brand-400"
                   >
                     Forgot password?
                   </Link>
@@ -98,10 +98,10 @@ export default function SignInForm() {
                       font-semibold
                       rounded-lg
                       shadow-md
-                      hover:bg-[#FE4C8A] 
+                      hover:bg-[#EE4E34] 
                       focus:outline-none
                       focus:ring-2
-                      focus:ring-[#FE4C8A] 
+                      focus:ring-[#EE4E34] 
                       focus:ring-opacity-75
                       transition
                       duration-200
@@ -119,7 +119,7 @@ export default function SignInForm() {
                 Don&apos;t have an account? {""}
                 <Link
                   to="/signup"
-                  className="text-[#FE4C8A] hover:text-brand-600 dark:text-brand-400"
+                  className="text-[#EE4E34] hover:text-brand-600 dark:text-brand-400"
                 >
                   Sign Up
                 </Link>

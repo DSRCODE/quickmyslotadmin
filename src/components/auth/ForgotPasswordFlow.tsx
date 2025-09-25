@@ -89,13 +89,13 @@ export default function ForgotPasswordFlow() {
             </div>
             <button
               type="submit"
-              className="w-full py-3 bg-[#4C4A89] text-white font-semibold rounded-lg shadow-md hover:bg-[#FE4C8A] transition"
+              className="w-full py-3 bg-[#4C4A89] text-white font-semibold rounded-lg shadow-md hover:bg-[#EE4E34] transition"
             >
               Send OTP
             </button>
             <p className="text-sm text-center mt-3">
               Back to{" "}
-              <Link to="/signin" className="text-[#FE4C8A] hover:underline">
+              <Link to="/signin" className="text-[#EE4E34] hover:underline">
                 Sign In
               </Link>
             </p>
@@ -126,14 +126,14 @@ export default function ForgotPasswordFlow() {
               <button
                 type="button"
                 onClick={() => console.log("Resend OTP")}
-                className="text-sm text-[#FE4C8A] hover:underline"
+                className="text-sm text-[#EE4E34] hover:underline"
               >
                 Resend OTP
               </button>
             </div>
             <button
               type="submit"
-              className="w-full py-3 bg-[#4C4A89] text-white font-semibold rounded-lg shadow-md hover:bg-[#FE4C8A]  transition"
+              className="w-full py-3 bg-[#4C4A89] text-white font-semibold rounded-lg shadow-md hover:bg-[#EE4E34]  transition"
             >
               Verify OTP
             </button>

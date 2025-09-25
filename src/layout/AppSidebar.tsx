@@ -106,7 +106,12 @@ const navItems: NavItem[] = [
     subItems: [
       { name: "Banner", icon: <Image />, path: "/ads", pro: false },
       { name: "CMS", icon: <FileText />, path: "/cms", pro: false },
-      { name: "Notification", icon: <Bell />, path: "/notification", pro: false },
+      {
+        name: "Notification",
+        icon: <Bell />,
+        path: "/notification",
+        pro: false,
+      },
       { name: "Email", icon: <Mail />, path: "/mail", pro: false },
       { name: "Whatsapp", icon: <MessageCircle />, path: "/media", pro: false },
     ],
@@ -190,7 +195,7 @@ const AppSidebar: React.FC = () => {
                 height={40}
               />
               <div>
-                <span className="tracking-wide text-[#FE4C8A] ">QUICK</span>
+                <span className="tracking-wide text-[#EE4E34] ">QUICK</span>
                 <span className="tracking-wide  text-[#090A14] ">MY</span>
                 <span className="tracking-wide  text-[#090A14] ">SLOT</span>
               </div>
@@ -262,14 +267,14 @@ const AppSidebar: React.FC = () => {
                       to={nav.path}
                       className={`menu-item group ${
                         isActive(nav.path)
-                          ? "text-[#fff] bg-[#FF4D8B]"
+                          ? "text-[#fff] bg-[#EE4E34]"
                           : "menu-item-inactive"
                       }`}
                     >
                       <span
                         className={`menu-item-icon-size ${
                           isActive(nav.path)
-                            ? "text-[#fff] bg-[#FF4D8B]"
+                            ? "text-[#fff] bg-[#EE4E34]"
                             : "menu-item-icon-inactive"
                         }`}
                       >
@@ -301,7 +306,7 @@ const AppSidebar: React.FC = () => {
                             to={subItem.path}
                             className={`menu-dropdown-item ${
                               isActive(subItem.path)
-                                ? "text-[#fff] bg-[#FF4D8B]"
+                                ? "text-[#fff] bg-[#EE4E34]"
                                 : "menu-dropdown-item-inactive"
                             }`}
                           >
@@ -323,7 +328,7 @@ const AppSidebar: React.FC = () => {
               onClick={handleLogout}
               className={`menu-item border mb-4 group cursor-pointer w-full flex items-center gap-3 px-4 py-2 rounded-lg ${
                 isExpanded || isHovered || isMobileOpen
-                  ? "justify-start text-gray-900 hover:bg-[#FF4D8B] hover:text-white"
+                  ? "justify-start text-gray-900 hover:bg-[#EE4E34] hover:text-white"
                   : "justify-center"
               }`}
             >

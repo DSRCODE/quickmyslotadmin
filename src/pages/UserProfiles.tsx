@@ -135,9 +135,9 @@ export default function UserProfiles() {
           {/* Edit button for profile pic */}
           <button
             onClick={() => openModal("profilePic")}
-            className="px-4 py-2 bg-blue-500 text-white rounded font-semibold hover:bg-[#FE4C8A] transition-colors text-sm"
+            className="px-4 py-2 bg-blue-500 text-white rounded font-semibold hover:bg-[#EE4E34] transition-colors text-sm"
           >
-           <Edit/>
+            <Edit />
           </button>
         </div>
 
@@ -208,7 +208,7 @@ export default function UserProfiles() {
             {/* Forgot Password Button */}
             <button
               onClick={() => openModal("password")}
-              className="mt-6 px-4 py-2 bg-blue-500 text-white rounded font-semibold hover:bg-[#FE4C8A] transition-colors text-sm"
+              className="mt-6 px-4 py-2 bg-blue-500 text-white rounded font-semibold hover:bg-[#EE4E34] transition-colors text-sm"
             >
               Forgot Password
             </button>
@@ -317,7 +317,7 @@ export default function UserProfiles() {
                     </button>
                     <button
                       type="submit"
-                      className="py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-[#FE4C8A] transition"
+                      className="py-2 px-4 rounded bg-blue-500 text-white font-semibold hover:bg-[#EE4E34] transition"
                     >
                       Save
                     </button>
@@ -367,7 +367,7 @@ export default function UserProfiles() {
                       disabled={!newProfilePic}
                       className={`py-2 px-4 rounded ${
                         newProfilePic
-                          ? "bg-blue-500 text-white hover:bg-[#FE4C8A]"
+                          ? "bg-blue-500 text-white hover:bg-[#EE4E34]"
                           : "bg-gray-300 text-gray-600 cursor-not-allowed"
                       } font-semibold transition`}
                     >

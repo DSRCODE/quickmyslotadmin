@@ -8,7 +8,7 @@ export default function LineChartOne() {
       position: "top",
       horizontalAlign: "left",
     },
-    colors: ["#4f4981", "#9CB9FF"], // Define line colors
+    colors: ["#EE4E34", "#EE4E34"], // Define line colors
     chart: {
       fontFamily: "Outfit, sans-serif",
       height: 310,
@@ -88,7 +88,7 @@ export default function LineChartOne() {
       labels: {
         style: {
           fontSize: "12px", // Adjust font size for y-axis labels
-          colors: ["#6B7280"], // Color of the labels
+          colors: ["#EE4E34"], // Color of the labels
         },
       },
       title: {

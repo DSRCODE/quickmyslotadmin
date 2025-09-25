@@ -80,7 +80,7 @@ const CMSPrivacyEditor = ({ userType }) => {
 
       <button
         onClick={handleSave}
-        className="mt-6 px-4 py-2 bg-blue-500 text-white rounded font-semibold hover:bg-[#FE4C8A] transition-colors text-sm"
+        className="mt-6 px-4 py-2 bg-blue-500 text-white rounded font-semibold hover:bg-[#EE4E34] transition-colors text-sm"
         style={{ width: "14%" }}
         disabled={!editor || isLoading}
       >

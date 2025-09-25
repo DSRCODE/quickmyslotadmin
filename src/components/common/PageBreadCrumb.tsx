@@ -39,9 +39,7 @@ const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pageTitle }) => {
               </svg>
             </Link>
           </li>
-          <li className="text-sm text-[#FF4D8B] ">
-            {pageTitle}
-          </li>
+          <li className="text-sm text-[#EE4E34] ">{pageTitle}</li>
         </ol>
       </nav>
     </div>
