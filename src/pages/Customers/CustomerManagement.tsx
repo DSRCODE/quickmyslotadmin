@@ -11,59 +11,22 @@ import {
   Tag,
   Row,
   Col,
+  Spin,
 } from "antd";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useGetUsersQuery } from "../../redux/api/UserApi";
+import { useSidebar } from "../../context/SidebarContext";
 
 const { Option } = Select;
 
-const initialUsers = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "+91xxxxxxxxx78",
-    status: "Active",
-    approved: false,
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    phone: "+91xxxxxxxxx78",
-    status: "Inactive",
-    approved: false,
-  },
-  {
-    id: 3,
-    name: "Michael Johnson",
-    email: "michael@example.com",
-    phone: "+91xxxxxxxxx78",
-    status: "Active",
-    approved: true,
-  },
-  {
-    id: 4,
-    name: "Emily Davis",
-    email: "emily@example.com",
-    phone: "+91xxxxxxxxx78",
-    status: "Active",
-    approved: false,
-  },
-  {
-    id: 5,
-    name: "William Brown",
-    email: "william@example.com",
-    phone: "+91xxxxxxxxx78",
-    status: "Inactive",
-    approved: true,
-  },
-];
-
 const CustomerManagement = () => {
+  const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+
+  const { data: UserList, isLoading, error } = useGetUsersQuery();
+  console.log(UserList?.data);
   const navigate = useNavigate();
-  const [users, setUsers] = useState(initialUsers);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
 
@@ -71,144 +34,149 @@ const CustomerManagement = () => {
   const [statusFilter, setStatusFilter] = useState("All");
 
   const handleDelete = (id) => {
-    setUsers((prev) => prev.filter((user) => user.id !== id));
     message.success("User deleted successfully");
   };
 
   const handleToggleStatus = (id) => {
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.id === id
-          ? {
-              ...user,
-              status: user.status === "Active" ? "Inactive" : "Active",
-            }
-          : user
-      )
-    );
     message.success("User status updated");
   };
 
   const handleApprove = (id) => {
-    setUsers((prev) =>
-      prev.map((user) => (user.id === id ? { ...user, approved: true } : user))
-    );
     message.success("User approved");
   };
 
   const handleDisapprove = (id) => {
-    setUsers((prev) =>
-      prev.map((user) => (user.id === id ? { ...user, approved: false } : user))
-    );
     message.success("User disapproved");
   };
 
   const handleAddUser = () => {
     form.validateFields().then((values) => {
-      const newUser = {
-        id: users.length ? Math.max(...users.map((u) => u.id)) + 1 : 1,
-        approved: false,
-        ...values,
-      };
-      setUsers((prev) => [...prev, newUser]);
       message.success("User added successfully");
       setIsModalOpen(false);
       form.resetFields();
     });
   };
 
-  // Filter users by search and status filter
-  const filteredUsers = useMemo(() => {
-    return users.filter((user) => {
-      // Filter by status
-      if (statusFilter !== "All" && user.status !== statusFilter) return false;
-      // Filter by search text in name, email, or phone
-      const lowerSearch = searchText.toLowerCase();
-      if (
-        !user.name.toLowerCase().includes(lowerSearch) &&
-        !user.email.toLowerCase().includes(lowerSearch) &&
-        !user.phone.toLowerCase().includes(lowerSearch)
-      ) {
-        return false;
-      }
-      return true;
-    });
-  }, [users, searchText, statusFilter]);
-
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => (a.name || "").localeCompare(b.name || ""),
       render: (text, record) => (
         <a
           style={{ color: "#465FFF", cursor: "pointer" }}
-          onClick={() => navigate(`/customer-details/${record.id}`)} // Navigate with user ID if needed
+          onClick={() => navigate(`/customer-details/${record.id}`)}
         >
-          {text}
+          {text || "N/A"}
         </a>
       ),
     },
     {
       title: "Email",
       dataIndex: "email",
+      render: (text) => text || "N/A",
     },
     {
       title: "Phone",
-      dataIndex: "phone",
+      dataIndex: "phone_number",
+      render: (text) => text || "N/A",
+    },
+    {
+      title: "Profile Image",
+      dataIndex: "image",
+      render: (url) =>
+        url ? (
+          <img
+            src={url}
+            alt="profile"
+            style={{ width: 40, borderRadius: "50%" }}
+          />
+        ) : (
+          "No Image"
+        ),
+    },
+    {
+      title: "Role",
+      dataIndex: "user_role_id",
+      render: (roleId) => {
+        switch (roleId) {
+          case 1:
+            return "Admin";
+          case 2:
+            return "User";
+          case 3:
+            return "Vendor";
+          default:
+            return "Unknown";
+        }
+      },
     },
     {
       title: "Status",
-      dataIndex: "status",
+      dataIndex: "is_active",
       filters: [
-        { text: "Active", value: "Active" },
-        { text: "Inactive", value: "Inactive" },
+        { text: "Active", value: 1 },
+        { text: "Inactive", value: 0 },
       ],
-      onFilter: (value, record) => record.status === value,
-      render: (status) => (
-        <Tag color={status === "Active" ? "green" : "volcano"}>{status}</Tag>
+      onFilter: (value, record) => record.is_active === value,
+      render: (isActive) => (
+        <Tag color={isActive ? "green" : "volcano"}>
+          {isActive ? "Active" : "Inactive"}
+        </Tag>
       ),
     },
-
+    {
+      title: "Verified",
+      dataIndex: "is_verified",
+      render: (verified) => (
+        <Tag color={verified ? "green" : "orange"}>
+          {verified ? "Verified" : "Not Verified"}
+        </Tag>
+      ),
+    },
+    {
+      title: "Business Name",
+      dataIndex: "business_name",
+      render: (text) => text || "N/A",
+    },
+    {
+      title: "Category",
+      dataIndex: "service_category",
+      render: (text) => text || "N/A",
+    },
+    {
+      title: "Documents",
+      dataIndex: "portfolio_images",
+      render: (imgs) =>
+        imgs && imgs.length > 0 ? `${imgs.length} Files` : "No Documents",
+    },
+    {
+      title: "Created At",
+      dataIndex: "created_at",
+      render: (date) => (date ? new Date(date).toLocaleDateString() : "N/A"),
+    },
+    {
+      title: "Updated At",
+      dataIndex: "updated_at",
+      render: (date) => (date ? new Date(date).toLocaleDateString() : "N/A"),
+    },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "8px" }}>
           <Button
             type="default"
             style={{
-              backgroundColor:
-                record.status === "Inactive" ? "#00A86B" : "#E23D28",
+              backgroundColor: record.is_active ? "#E23D28" : "#00A86B",
               color: "white",
-              width: "110px",
+              width: "100px",
               whiteSpace: "nowrap",
             }}
             onClick={() => handleToggleStatus(record.id)}
           >
-            {record.status === "Active" ? "Deactivate" : "Activate"}
+            {record.is_active ? "Deactivate" : "Activate"}
           </Button>
-
-          {/* 
- {record.approved ? (
-            <Button
-              type="default"
-              danger
-              style={{ width: "110px", whiteSpace: "nowrap" }}
-              onClick={() => handleDisapprove(record.id)}
-            >
-              Disapprove
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              style={{ width: "110px", whiteSpace: "nowrap" }}
-              onClick={() => handleApprove(record.id)}
-            >
-              Approve
-            </Button>
-          )}
-*/}
           <Popconfirm
             title="Are you sure to delete this user?"
             onConfirm={() => handleDelete(record.id)}
@@ -227,7 +195,13 @@ const CustomerManagement = () => {
   ];
 
   return (
-    <div>
+    <div
+      className={`flex-1  transition-all duration-300 ease-in-out ${
+        isExpanded || isHovered
+          ? "lg:pl-0 lg:w-[1190px]"
+          : "lg:pl-[0px] lg:w-[1390px]"
+      } ${isMobileOpen ? "ml-0" : ""}`}
+    >
       <PageBreadcrumb pageTitle="Customers Management" />
 
       {/* Search and Status Filter Row */}
@@ -278,18 +252,27 @@ const CustomerManagement = () => {
         </Col> */}
       </Row>
 
-      <Table
-        columns={columns}
-        dataSource={filteredUsers}
-        rowKey="id"
-        pagination={{
-          pageSizeOptions: ["5", "10", "15"],
-          showSizeChanger: true,
-          defaultPageSize: 5,
-        }}
-        scroll={{ x: "max-content" }}
-      />
-
+      {isLoading ? (
+        <div className="flex justify-center items-center flex-col gap-4 h-[60vh] border">
+          <Spin />
+          Loading Please Wait....
+        </div>
+      ) : (
+        <>
+          {/* Table here */}
+          <Table
+            columns={columns}
+            dataSource={UserList?.data}
+            rowKey="id"
+            scroll={{ x: "max-content" }}
+            pagination={{
+              pageSizeOptions: ["5", "10", "15"],
+              showSizeChanger: true,
+              defaultPageSize: 5,
+            }}
+          />
+        </>
+      )}
       {/* Add User Modal */}
       <Modal
         title="Add New User"

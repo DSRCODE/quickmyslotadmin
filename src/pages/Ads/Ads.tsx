@@ -11,155 +11,161 @@ import {
   Modal,
   Radio,
   Input,
+  Spin,
 } from "antd";
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import {
+  useAddAdMutation,
+  useGetAdsQuery,
+  useDeleteAdMutation,
+} from "../../redux/api/AdsApi";
+import { toast } from "react-toastify";
 
 const { TabPane } = Tabs;
 
 const Ads = () => {
-  // State per type per tab
-  const [customerAds, setCustomerAds] = useState({
-    images: [
-      {
-        id: 1,
-        url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjxpMQrd2k35nY-EuE2lU1Hkmm220Mfpz2QQ&s",
-      },
-    ],
-    videos: [],
-    urls: [],
-  });
+  const { data: adsData, isLoading, refetch } = useGetAdsQuery({});
+  const [addAd, { isLoading: saving }] = useAddAdMutation();
+  const [deleteAd] = useDeleteAdMutation();
 
-  const [providerAds, setProviderAds] = useState({
-    images: [
-      {
-        id: 2,
-        url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0LzEvqv7P9axwruY3xNUDmKeIPVJbUu4ZWw&s",
-      },
-    ],
-    videos: [],
-    urls: [],
-  });
-
-  const [activeTab, setActiveTab] = useState("customer");
-  const [internalTab, setInternalTab] = useState("images"); // images/videos/urls
+  const [activeTab, setActiveTab] = useState("user"); // user | vendor
+  const [internalTab, setInternalTab] = useState("image"); // image | video | url
   const [modalVisible, setModalVisible] = useState(false);
   const [contentType, setContentType] = useState("image");
   const [urlInput, setUrlInput] = useState("");
+  const [positionInput, setPositionInput] = useState("");
   const [fileList, setFileList] = useState([]);
 
-  // Helper for current ads
-  const currentAds = activeTab === "customer" ? customerAds : providerAds;
-  const setCurrentAds =
-    activeTab === "customer" ? setCustomerAds : setProviderAds;
+  // Regex helpers
+  const videoExtensions = /\.(mp4|webm|ogg)$/i;
+  const imageExtensions = /\.(jpeg|jpg|gif|png|svg)$/i;
 
-  // Open modal resets state
+  // Open modal
   const openModal = () => {
     setContentType("image");
     setFileList([]);
     setUrlInput("");
+    setPositionInput("");
     setModalVisible(true);
   };
 
   // Upload change handler
   const onUploadChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList.slice(-1)); // Keep last only
+    setFileList(newFileList.slice(-1));
   };
 
-  // Prevent auto upload
   const beforeUpload = () => false;
 
-  // Add new ad item handler
-  const addAdItem = (file) => {
+  // Add Ad Item
+  const addAdItem = async (file: any) => {
+    let formData = new FormData();
+
     if (contentType === "url") {
       if (!urlInput.trim()) {
-        message.error("Please enter a valid URL");
-        return false;
+        toast.error("Please enter a valid URL");
+        return;
       }
-      const newItem = { id: Date.now(), url: urlInput.trim() };
-      setCurrentAds((prev) => ({
-        ...prev,
-        urls: [newItem, ...prev.urls],
-      }));
+      formData.append("image", urlInput.trim());
     } else {
       if (!file) {
-        message.error(`Please select a ${contentType} file`);
-        return false;
+        toast.error(`Please select a ${contentType} file`);
+        return;
       }
-      const newItem = { id: Date.now(), url: URL.createObjectURL(file) };
-      setCurrentAds((prev) => ({
-        ...prev,
-        [contentType === "image" ? "images" : "videos"]: [
-          newItem,
-          ...prev[contentType === "image" ? "images" : "videos"],
-        ],
-      }));
+      formData.append("image", file);
     }
-    message.success(
-      `${contentType.charAt(0).toUpperCase() + contentType.slice(1)} added!`
-    );
-    setModalVisible(false);
-    setFileList([]);
-    setUrlInput("");
-    return true;
+
+    formData.append("type", activeTab === "user" ? "user" : "vendor");
+    formData.append("extensions", contentType);
+    formData.append("position", positionInput);
+
+    try {
+      await addAd(formData).unwrap();
+      toast.success(`${contentType} uploaded!`);
+      setModalVisible(false);
+      setFileList([]);
+      setUrlInput("");
+      refetch();
+    } catch (e) {
+      toast.error("Ad upload failed. Please try again.");
+    }
   };
 
-  // Delete ad item
-  const handleDelete = (id) => {
-    const adType = internalTab;
-    setCurrentAds((prev) => ({
-      ...prev,
-      [adType]: prev[adType].filter((item) => item.id !== id),
-    }));
-    message.success("Ad banner deleted!");
+  // Delete Ad
+  const handleDelete = async (id: number) => {
+    console.log(id);
+    try {
+      let formData = new FormData();
+      formData.append("id", id.toString());
+      await deleteAd(formData).unwrap();
+      toast.success("Ad deleted!");
+      refetch();
+    } catch (e) {
+      toast.error("Failed to delete ad.");
+    }
   };
 
-  // Toggle Visibility
-  const toggleVisibility = (id) => {
-    setCurrentAds((prev) => ({
-      ...prev,
-      [internalTab]: prev[internalTab].map((item) =>
-        item.id === id ? { ...item, visible: !item.visible } : item
-      ),
-    }));
-  };
+  // Filtering ads
+  const filteredAds =
+    adsData?.data?.filter((ad) => {
+      if (ad.type !== activeTab) return false;
 
-  // Items to display
-  const adsToDisplay = currentAds[internalTab];
+      if (internalTab === "image") {
+        return (
+          ad.extensions === "image" ||
+          (ad.extensions === "url" && imageExtensions.test(ad.image))
+        );
+      }
 
-  // Render logic for URLs: detect image or video or fallback
-  const renderUrl = (url, id) => {
-    const videoExtensions = /\.(mp4|webm|ogg)$/i;
-    const imageExtensions = /\.(jpeg|jpg|gif|png|svg)$/i;
+      if (internalTab === "video") {
+        return (
+          ad.extensions === "video" ||
+          (ad.extensions === "url" && videoExtensions.test(ad.image))
+        );
+      }
 
-    if (videoExtensions.test(url)) {
+      if (internalTab === "url") {
+        return (
+          ad.extensions === "url" &&
+          !imageExtensions.test(ad.image) &&
+          !videoExtensions.test(ad.image)
+        );
+      }
+
+      return true;
+    }) || [];
+
+  // Render preview
+  const renderPreview = (ad: any) => {
+    if (
+      ad.extensions === "image" ||
+      (ad.extensions === "url" && imageExtensions.test(ad.image))
+    ) {
+      return (
+        <Image
+          src={ad.image}
+          alt="ad banner"
+          style={{ maxWidth: "100%", maxHeight: 150 }}
+        />
+      );
+    }
+
+    if (
+      ad.extensions === "video" ||
+      (ad.extensions === "url" && videoExtensions.test(ad.image))
+    ) {
       return (
         <video
-          src={url}
+          src={ad.image}
           controls
           style={{ maxWidth: "100%", maxHeight: 150 }}
         />
       );
     }
-    if (imageExtensions.test(url)) {
-      return (
-        <Image
-          src={url}
-          alt={`URL banner ${id}`}
-          style={{ maxWidth: "100%", maxHeight: 150 }}
-        />
-      );
-    }
+
     return (
-      <a
-        href={url}
-        target="_blank"
-        rel="noreferrer"
-        style={{ display: "inline-block", wordBreak: "break-all" }}
-      >
-        {url.length > 30 ? url.substr(0, 27) + "..." : url}
+      <a href={ad.image} target="_blank" rel="noreferrer">
+        {ad.image.length > 30 ? ad.image.substr(0, 27) + "..." : ad.image}
       </a>
     );
   };
@@ -174,8 +180,8 @@ const Ads = () => {
         onChange={setActiveTab}
         style={{ marginBottom: 20 }}
       >
-        <TabPane tab="Customer Banners" key="customer" />
-        <TabPane tab="Provider Banners" key="provider" />
+        <TabPane tab="Customer Banners" key="user" />
+        <TabPane tab="Provider Banners" key="vendor" />
       </Tabs>
 
       <Button
@@ -191,82 +197,54 @@ const Ads = () => {
         onChange={setInternalTab}
         style={{ marginBottom: 20 }}
       >
-        <TabPane tab="Images" key="images" />
-        <TabPane tab="Videos" key="videos" />
-        <TabPane tab="URLs" key="urls" />
+        <TabPane tab="Images" key="image" />
+        <TabPane tab="Videos" key="video" />
+        <TabPane tab="URLs" key="url" />
       </Tabs>
 
       {/* Ads Grid */}
-      <Row gutter={[16, 16]}>
-        {adsToDisplay.map(({ id, url, visible = true }) => (
-          <Col key={id} xs={24} sm={12} md={8} lg={6}>
-            <div className="flex items-center justify-between px-2">
-              <div>
-                <p>Action</p>
-              </div>
-              <div>
+      {isLoading ? (
+        <Spin tip="Loading ads..." />
+      ) : (
+        <Row gutter={[16, 16]}>
+          {filteredAds.map((ad) => (
+            <Col key={ad.id} xs={24} sm={12} md={8} lg={6}>
+              <div
+                style={{
+                  border: "1px solid #f0f0f0",
+                  borderRadius: 4,
+                  padding: 8,
+                  textAlign: "center",
+                  position: "relative",
+                }}
+              >
+                {renderPreview(ad)}
+
+                {/* Delete Button */}
                 <Popconfirm
-                  title="Are you sure to delete this banner?"
-                  onConfirm={() => handleDelete(id)}
+                  title="Are you sure you want to delete this ad?"
+                  onConfirm={() => handleDelete(ad.id)}
                   okText="Yes"
                   cancelText="No"
                 >
                   <Button
-                    danger
                     type="text"
+                    danger
                     icon={<DeleteOutlined />}
+                    style={{ position: "absolute", top: 8, right: 8 }}
                   />
                 </Popconfirm>
-
-                <Button
-                  type="text"
-                  icon={visible ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                  onClick={() => toggleVisibility(id)}
-                  title={visible ? "Hide this banner" : "Show this banner"}
-                />
               </div>
-            </div>
-            <div
-              style={{
-                opacity: visible ? 1 : 0.4,
-                position: "relative",
-                border: "1px solid #f0f0f0",
-                borderRadius: 4,
-                padding: 8,
-                textAlign: "center",
-              }}
-            >
-              {internalTab === "videos" ? (
-                <video
-                  src={url}
-                  controls
-                  style={{ maxWidth: "100%", maxHeight: 150 }}
-                />
-              ) : internalTab === "urls" ? (
-                renderUrl(url, id)
-              ) : (
-                <Image
-                  src={url}
-                  alt={`${internalTab} banner ${id}`}
-                  style={{ maxWidth: "100%", maxHeight: 150 }}
-                />
-              )}
-            </div>
-          </Col>
-        ))}
-      </Row>
+            </Col>
+          ))}
+        </Row>
+      )}
 
-      {/* Add/Edit Modal */}
+      {/* Add Modal */}
       <Modal
-        title={`Add New ${
-          contentType.charAt(0).toUpperCase() + contentType.slice(1)
-        }`}
+        title={`Add New ${contentType}`}
         visible={modalVisible}
-        onCancel={() => {
-          setModalVisible(false);
-          setFileList([]);
-          setUrlInput("");
-        }}
+        onCancel={() => setModalVisible(false)}
         onOk={() => {
           if (contentType === "url") {
             addAdItem("");
@@ -278,30 +256,37 @@ const Ads = () => {
             addAdItem(fileList[0].originFileObj);
           }
         }}
+        confirmLoading={saving}
       >
-        <div>
-          <Radio.Group
-            onChange={(e) => {
-              setContentType(e.target.value);
-              setFileList([]);
-              setUrlInput("");
-            }}
-            value={contentType}
-            style={{ marginBottom: 20 }}
-          >
-            <Radio value="image">Image</Radio>
-            <Radio value="video">Video</Radio>
-            <Radio value="url">URL</Radio>
-          </Radio.Group>
-        </div>
+        <Radio.Group
+          onChange={(e) => {
+            setContentType(e.target.value);
+            setFileList([]);
+            setUrlInput("");
+          }}
+          value={contentType}
+          style={{ marginBottom: 20 }}
+        >
+          <Radio value="image">Image</Radio>
+          <Radio value="video">Video</Radio>
+          <Radio value="url">URL</Radio>
+        </Radio.Group>
 
         {contentType === "url" && (
           <Input
-            placeholder="Enter URL of image or video"
+            placeholder="Enter URL"
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
+            style={{ marginBottom: "8px" }}
           />
         )}
+
+        <Input
+          placeholder="Enter Position"
+          value={positionInput}
+          onChange={(e) => setPositionInput(e.target.value)}
+          style={{ marginBottom: "8px" }}
+        />
 
         {(contentType === "image" || contentType === "video") && (
           <Upload

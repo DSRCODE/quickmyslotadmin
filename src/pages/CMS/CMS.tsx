@@ -2,69 +2,63 @@ import React, { useState, useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Button, Spin, Tabs } from "antd";
+import { useEditCmsMutation, useGetCmsQuery } from "../../redux/api/cmsApi";
+import { toast } from "react-toastify";
 
 const { TabPane } = Tabs;
 
-const policiesByRole = {
-  customer: {
-    terms: `<h2>Customer Terms & Conditions</h2>...`, // Replace or reuse your existing customer policy HTML here
-    privacy: `<h2>Customer Privacy Policy</h2>...`,
-    about: `<h2>Customer About Us</h2>...`,
-  },
-  provider: {
-    terms: `<h2>Provider Terms & Conditions</h2>...`, // Replace or reuse your existing provider policy HTML here
-    privacy: `<h2>Provider Privacy Policy</h2>...`,
-    about: `<h2>Provider About Us</h2>...`,
-  },
-};
-
 const CMSPrivacyEditor = ({ userType }) => {
-  const [selectedPolicyTab, setSelectedPolicyTab] = useState("privacy");
-  const [isFetching, setIsFetching] = useState(false);
-
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: "", // will be set on load
+  const [selectedPolicyTab, setSelectedPolicyTab] = useState("privacy-policy");
+  const { data, isLoading } = useGetCmsQuery({
+    type: userType,
+    slug: selectedPolicyTab,
   });
 
-  // When userType or selectedPolicyTab changes, update editor content
+  console.log(data?.data?.body);
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: data?.data?.body || "", // load API content here
+  });
+
   useEffect(() => {
-    if (editor && userType && selectedPolicyTab) {
-      editor.commands.setContent(
-        policiesByRole[userType][selectedPolicyTab] || ""
-      );
+    if (editor && data?.data?.body) {
+      editor.commands.setContent(data?.data?.body);
     }
-  }, [userType, selectedPolicyTab, editor]);
+  }, [data?.data?.body, editor]);
 
-  const handlePolicyTabChange = (key) => {
-    setSelectedPolicyTab(key);
-  };
+  const [editCms] = useEditCmsMutation();
 
-  const handleSave = () => {
-    if (!editor) return;
+  const handleSave = async () => {
+    if (!editor || !data) return;
     const htmlContent = editor.getHTML();
-    // Save or send this htmlContent for userType and selectedPolicyTab to backend API
-    console.log(
-      `Saving content for ${userType} - ${selectedPolicyTab}:`,
-      htmlContent
-    );
+
+    const formData = new FormData();
+    formData.append("id", data?.data?.id);
+    formData.append("body", htmlContent);
+
+    try {
+      await editCms(formData).unwrap();
+      toast.success("CMS Updated Successfully");
+    } catch {
+      toast.error("Failed to update CMS.");
+    }
   };
 
   return (
     <>
       <Tabs
         activeKey={selectedPolicyTab}
-        onChange={handlePolicyTabChange}
+        onChange={setSelectedPolicyTab}
         size="large"
         className="mb-4"
       >
-        <TabPane tab="Terms & Conditions" key="terms" />
-        <TabPane tab="Privacy" key="privacy" />
-        <TabPane tab="About" key="about" />
+        <TabPane tab="Terms & Conditions" key="terms-condition" />
+        <TabPane tab="Privacy" key="privacy-policy" />
+        <TabPane tab="About" key="about-us" />
       </Tabs>
 
       <div className="border rounded shadow-md bg-white min-h-[300px]">
-        {!editor ? (
+        {!editor || isLoading ? (
           <div
             style={{
               display: "flex",
@@ -88,7 +82,7 @@ const CMSPrivacyEditor = ({ userType }) => {
         onClick={handleSave}
         className="mt-6 px-4 py-2 bg-blue-500 text-white rounded font-semibold hover:bg-[#FE4C8A] transition-colors text-sm"
         style={{ width: "14%" }}
-        disabled={!editor}
+        disabled={!editor || isLoading}
       >
         Save
       </button>
@@ -99,7 +93,7 @@ const CMSPrivacyEditor = ({ userType }) => {
 const CMSPage = () => {
   const [selectedUserType, setSelectedUserType] = useState("customer");
 
-  const handleUserTypeChange = (key) => {
+  const handleUserTypeChange = (key: any) => {
     setSelectedUserType(key);
   };
 

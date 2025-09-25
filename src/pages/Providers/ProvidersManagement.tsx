@@ -11,10 +11,13 @@ import {
   Tag,
   Row,
   Col,
+  Spin,
 } from "antd";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useSidebar } from "../../context/SidebarContext";
+import { useGetprovidersQuery } from "../../redux/api/providerApi";
 
 const { Option } = Select;
 
@@ -82,6 +85,9 @@ const initialProviders = [
 ];
 
 const ProvidersManagement = () => {
+  const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+  const { data: ProviderList, isLoading, error } = useGetprovidersQuery();
+  console.log(ProviderList?.data);
   const navigate = useNavigate();
   const [users, setUsers] = useState(initialProviders);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -152,87 +158,97 @@ const ProvidersManagement = () => {
       return true;
     });
   }, [users, searchText, statusFilter]);
-
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => (a.name || "").localeCompare(b.name || ""),
       render: (text, record) => (
         <a
           style={{ color: "#465FFF", cursor: "pointer" }}
           onClick={() => navigate(`/providers-details/${record.id}`)}
         >
-          {text}
+          {text || "N/A"}
         </a>
       ),
     },
     {
       title: "Email",
       dataIndex: "email",
+      render: (text) => text || "N/A",
     },
     {
       title: "Phone",
-      dataIndex: "phone",
+      dataIndex: "phone_number",
+      render: (text) => text || "N/A",
     },
     {
       title: "Category",
-      dataIndex: "category",
-      sorter: (a, b) => a.category.localeCompare(b.category),
+      dataIndex: "service_category",
+      sorter: (a, b) =>
+        (a.service_category || "").localeCompare(b.service_category || ""),
+      render: (text) => text || "N/A",
+    },
+    {
+      title: "Location Served",
+      dataIndex: "location_area_served",
+      render: (text) => text || "N/A",
     },
     {
       title: "Join Date",
-      dataIndex: "joinDate",
+      dataIndex: "created_at",
       sorter: (a, b) =>
-        new Date(a.joinDate).getTime() - new Date(b.joinDate).getTime(),
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+      render: (date) => (date ? new Date(date).toLocaleDateString() : "N/A"),
     },
     {
       title: "Status",
-      dataIndex: "status",
+      dataIndex: "is_active",
       filters: [
-        { text: "Active", value: "Active" },
-        { text: "Inactive", value: "Inactive" },
+        { text: "Active", value: 1 },
+        { text: "Inactive", value: 0 },
       ],
-      onFilter: (value, record) => record.status === value,
-      render: (status) => (
-        <Tag color={status === "Active" ? "green" : "volcano"}>{status}</Tag>
+      onFilter: (value, record) => record.is_active === value,
+      render: (isActive) => (
+        <Tag color={isActive ? "green" : "volcano"}>
+          {isActive ? "Active" : "Inactive"}
+        </Tag>
       ),
     },
     {
       title: "Approval",
-      dataIndex: "approved",
+      dataIndex: "verified_by_admin",
+      filters: [
+        { text: "Approved", value: 1 },
+        { text: "Not Approved", value: 0 },
+      ],
+      onFilter: (value, record) => record.verified_by_admin === value,
       render: (approved) =>
         approved ? (
           <Tag color="blue">Approved</Tag>
         ) : (
           <Tag color="default">Not Approved</Tag>
         ),
-      filters: [
-        { text: "Approved", value: true },
-        { text: "Not Approved", value: false },
-      ],
-      onFilter: (value, record) => record.approved === value,
     },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <div style={{ display: "flex", gap: "8px" }}>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
           <Button
             type="default"
             style={{
-              backgroundColor:
-                record.status === "Inactive" ? "#00A86B" : "#E23D28",
+              backgroundColor: record.is_active ? "#E23D28" : "#00A86B",
               color: "white",
               width: "90px",
               whiteSpace: "nowrap",
             }}
             onClick={() => handleToggleStatus(record.id)}
           >
-            {record.status === "Active" ? "Deactivate" : "Activate"}
+            {record.is_active ? "Deactivate" : "Activate"}
           </Button>
 
-          {record.approved ? (
+          {record.verified_by_admin ? (
             <Button
               type="default"
               danger
@@ -269,7 +285,13 @@ const ProvidersManagement = () => {
   ];
 
   return (
-    <div>
+    <div
+      className={`flex-1  transition-all duration-300 ease-in-out ${
+        isExpanded || isHovered
+          ? "lg:pl-0 lg:w-[1190px]"
+          : "lg:pl-[0px] lg:w-[1390px]"
+      } ${isMobileOpen ? "ml-0" : ""}`}
+    >
       <PageBreadcrumb pageTitle="Providers Management" />
 
       {/* Search and Status Filter Row */}
@@ -320,17 +342,26 @@ const ProvidersManagement = () => {
         </Col> */}
       </Row>
 
-      <Table
-        columns={columns}
-        dataSource={filteredUsers}
-        rowKey="id"
-        pagination={{
-          pageSizeOptions: ["5", "10", "15"],
-          showSizeChanger: true,
-          defaultPageSize: 5,
-        }}
-        scroll={{ x: 1000 }}
-      />
+      {isLoading ? (
+        <div className="flex justify-center items-center flex-col gap-4 h-[60vh] border">
+          <Spin />
+          Loading Please Wait....
+        </div>
+      ) : (
+        <>
+          <Table
+            columns={columns}
+            dataSource={ProviderList?.data}
+            rowKey="id"
+            scroll={{ x: "max-content" }}
+            pagination={{
+              pageSizeOptions: ["5", "10", "15"],
+              showSizeChanger: true,
+              defaultPageSize: 5,
+            }}
+          />
+        </>
+      )}
 
       {/* Add Provider Modal */}
       <Modal

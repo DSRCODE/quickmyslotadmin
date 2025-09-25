@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es2016",                  // Minimum for Array.includes
-    "lib": ["es2016", "dom"],            // Add modern JS + browser APIs
-    "jsx": "react-jsx",                  // React 17+ JSX transform
+    "target": "es2016", // Minimum for Array.includes
+    "lib": ["es2016", "dom", "ESNext", "DOM"], // Add modern JS + browser APIs
+    "jsx": "react-jsx", // React 17+ JSX transform
+    "module": "esnext",
     "skipLibCheck": true,
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
