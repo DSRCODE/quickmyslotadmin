@@ -1,36 +1,34 @@
-import React, { useState, useEffect } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Spin, Tabs } from "antd";
+import JoditEditor from "jodit-react";
 import { useEditCmsMutation, useGetCmsQuery } from "../../redux/api/cmsApi";
 import { toast } from "react-toastify";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 
 const { TabPane } = Tabs;
 
 const CMSPrivacyEditor = ({ userType }) => {
+  const editor = useRef(null);
+  const [content, setContent] = useState("");
   const [selectedPolicyTab, setSelectedPolicyTab] = useState("privacy-policy");
+
   const { data, isLoading } = useGetCmsQuery({
     type: userType,
     slug: selectedPolicyTab,
   });
 
-  console.log(data?.data?.body);
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: data?.data?.body || "", // load API content here
-  });
-
-  useEffect(() => {
-    if (editor && data?.data?.body) {
-      editor.commands.setContent(data?.data?.body);
-    }
-  }, [data?.data?.body, editor]);
-
   const [editCms] = useEditCmsMutation();
 
+  // Load content when fetched
+  useEffect(() => {
+    if (data?.data?.body) {
+      setContent(data?.data?.body);
+    }
+  }, [data]);
+
   const handleSave = async () => {
-    if (!editor || !data) return;
-    const htmlContent = editor.getHTML();
+    if (!data) return;
+    const htmlContent = content;
 
     const formData = new FormData();
     formData.append("id", data?.data?.id);
@@ -58,22 +56,37 @@ const CMSPrivacyEditor = ({ userType }) => {
       </Tabs>
 
       <div className="border rounded shadow-md bg-white min-h-[300px]">
-        {!editor || isLoading ? (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "300px",
-              marginBottom: "10px",
-            }}
-          >
+        {isLoading ? (
+          <div className="flex justify-center items-center h-[300px]">
             <Spin size="large" />
           </div>
         ) : (
-          <EditorContent
-            editor={editor}
-            className="p-6 min-h-[300px] w-full prose prose-sm sm:prose lg:prose-lg dark:prose-invert dark:bg-gray-900 dark:text-gray-100 bg-white text-gray-900"
+          <JoditEditor
+            ref={editor}
+            value={content}
+            onChange={(newContent) => setContent(newContent)}
+            config={{
+              readonly: false,
+              minHeight: 300,
+              toolbarAdaptive: false,
+              buttons: [
+                "bold",
+                "italic",
+                "underline",
+                "|",
+                "ul",
+                "ol",
+                "|",
+                "link",
+                "image",
+                "|",
+                "align",
+                "undo",
+                "redo",
+                "hr",
+                "eraser",
+              ],
+            }}
           />
         )}
       </div>
@@ -82,7 +95,7 @@ const CMSPrivacyEditor = ({ userType }) => {
         onClick={handleSave}
         className="mt-6 px-4 py-2 bg-blue-500 text-white rounded font-semibold hover:bg-[#EE4E34] transition-colors text-sm"
         style={{ width: "14%" }}
-        disabled={!editor || isLoading}
+        disabled={isLoading}
       >
         Save
       </button>
@@ -93,13 +106,14 @@ const CMSPrivacyEditor = ({ userType }) => {
 const CMSPage = () => {
   const [selectedUserType, setSelectedUserType] = useState("customer");
 
-  const handleUserTypeChange = (key: any) => {
+  const handleUserTypeChange = (key) => {
     setSelectedUserType(key);
   };
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h2 className="text-2xl font-semibold mb-6">CMS Editor</h2>
+      <PageBreadcrumb pageTitle="Cms Editor" />
+
 
       <Tabs
         activeKey={selectedUserType}
@@ -111,7 +125,6 @@ const CMSPage = () => {
         <TabPane tab="Provider" key="provider" />
       </Tabs>
 
-      {/* Show the editor nested inside selected user type */}
       <CMSPrivacyEditor userType={selectedUserType} />
     </div>
   );

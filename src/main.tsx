@@ -10,16 +10,19 @@ import { Provider } from "react-redux";
 import { store } from "./redux/store/store";
 import "react-toastify/dist/ReactToastify.css";
 import { CustomToastContainer } from "./components/CustomToastContainer/CustomToastContainer";
+import { AuthProvider } from "./context/AuthContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider>
-      <AppWrapper>
-        <Provider store={store}>
-          <CustomToastContainer />
-          <App />
-        </Provider>
-      </AppWrapper>
-    </ThemeProvider>
+    <Provider store={store}>
+      <AuthProvider>
+        <ThemeProvider>
+          <AppWrapper>
+            <CustomToastContainer />
+            <App />
+          </AppWrapper>
+        </ThemeProvider>
+      </AuthProvider>
+    </Provider>
   </StrictMode>
 );

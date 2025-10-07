@@ -6,7 +6,7 @@ export default function SignIn() {
   return (
     <>
       <PageMeta
-        title="QUICKmySLOT Admin"
+        title="QucikMySLOT Admin"
         description="Manage your services efficiently — track services, clients, and operations all in one place."
       />
       <AuthLayout>

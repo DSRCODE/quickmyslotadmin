@@ -89,9 +89,9 @@ const AppHeader: React.FC = () => {
             <div className="flex items-center gap-2 text-primary font-bold text-xl">
               <img
                 className="dark:hidden"
-                src="/logo.png"
+                src="/lo.png"
                 alt="Logo"
-                width={60}
+                width={30}
                 height={30}
               />
               <div>

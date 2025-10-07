@@ -6,12 +6,16 @@ import { ticketListApi } from "../api/ticketListApi";
 import { productApi } from "../api/productApi";
 import { orderApi } from "../api/orderApi";
 import { cmsApi } from "../api/cmsApi";
-import { categoryApi } from "../api/categoryApi";
 import { propertyApi } from "../api/propertyApi";
 import { AdsApi } from "../api/AdsApi";
 import { UserApi } from "../api/UserApi";
 import { chargeApi } from "../api/chargeApi";
 import { providerApi } from "../api/providerApi";
+import { bidApi } from "../api/bidApi";
+import { authApi } from "../api/authApi";
+import { categoryApi } from "../api/categoryApi";
+import { faqApi } from "../api/faqApi";
+import { subscriptionApi } from "../api/subscriptionApi";
 
 export const store = configureStore({
   reducer: {
@@ -27,6 +31,10 @@ export const store = configureStore({
     [AdsApi.reducerPath]: AdsApi.reducer,
     [UserApi.reducerPath]: UserApi.reducer,
     [providerApi.reducerPath]: providerApi.reducer,
+    [bidApi.reducerPath]: bidApi.reducer,
+    [authApi.reducerPath]: authApi.reducer,
+    [faqApi.reducerPath]: faqApi.reducer,
+    [subscriptionApi.reducerPath]: subscriptionApi.reducer,
     [chargeApi.reducerPath]: chargeApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -37,11 +45,15 @@ export const store = configureStore({
       .concat(ticketListApi.middleware)
       .concat(productApi.middleware)
       .concat(orderApi.middleware)
-      .concat(cmsApi.middleware)
-      .concat(categoryApi.middleware)
       .concat(propertyApi.middleware)
+      .concat(cmsApi.middleware)
       .concat(AdsApi.middleware)
       .concat(UserApi.middleware)
       .concat(providerApi.middleware)
+      .concat(bidApi.middleware)
+      .concat(authApi.middleware)
+      .concat(categoryApi.middleware)
+      .concat(faqApi.middleware)
+      .concat(subscriptionApi.middleware)
       .concat(chargeApi.middleware),
 });

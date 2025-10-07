@@ -26,6 +26,10 @@ import {
   Bell,
   Mail,
   MessageCircle,
+  Coins,
+  ChartBarStacked,
+  CircleQuestionMark,
+  Podcast,
 } from "lucide-react";
 
 type NavItem = {
@@ -46,6 +50,16 @@ const navItems: NavItem[] = [
     icon: <LayoutDashboard />,
     name: "Dashboard",
     path: "/",
+  },
+  {
+    icon: <ChartBarStacked />,
+    name: "Category Management",
+    path: "/category",
+  },
+  {
+    icon: <Coins />,
+    name: "Bid Management",
+    path: "/bid",
   },
   {
     icon: <Users />,
@@ -99,6 +113,16 @@ const navItems: NavItem[] = [
     icon: <NotebookText />,
     name: "Transaction",
     path: "/transaction",
+  },
+  {
+    icon: <CircleQuestionMark />,
+    name: "Faq Management",
+    path: "/faq",
+  },
+  {
+    icon: <Podcast />,
+    name: "Subscription Management",
+    path: "/subscription",
   },
   {
     icon: <Settings />,
@@ -180,7 +204,7 @@ const AppSidebar: React.FC = () => {
     >
       {/* Logo */}
       <div
-        className={`py-8 flex ${
+        className={`py-6 flex ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
@@ -189,9 +213,9 @@ const AppSidebar: React.FC = () => {
             <div className="flex  gap-2 items-center text-primary font-bold text-[16px]">
               <img
                 className="dark:hidden"
-                src="/logo.png"
+                src="/lo.png"
                 alt="Logo"
-                width={100}
+                width={40}
                 height={40}
               />
               <div>
@@ -201,7 +225,7 @@ const AppSidebar: React.FC = () => {
               </div>
             </div>
           ) : (
-            <img src="/logo.png" alt="Logo" width={32} height={32} />
+            <img src="/lo.png" alt="Logo" width={32} height={32} />
             // <div className="flex items-center gap-2 text-primary font-bold text-xl">
             //   <Warehouse className="h-6 w-6 text-primary text-[#4f4981]" />
             // </div>
@@ -223,7 +247,7 @@ const AppSidebar: React.FC = () => {
               <HorizontaLDots className="size-6" />
             )}
           </h2>
-          <ul className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-3">
             {navItems.map((nav, index) => (
               <li key={nav.name}>
                 {nav.subItems ? (

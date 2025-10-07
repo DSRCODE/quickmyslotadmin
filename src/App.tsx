@@ -24,6 +24,11 @@ import Transaction from "./pages/Transaction/Transaction";
 import NotifyMessages from "./pages/Notification/NotifyMessages";
 import WhatsAppMedia from "./pages/Whatsapp/WhatsAppMedia";
 import Mail from "./pages/Email/Mail";
+import Bid from "./pages/Bid/Bid";
+import ProtectedRoute from "./context/ProtectedRoute";
+import CategoryManagement from "./pages/Category/CategoryManagement";
+import FaqManagement from "./pages/Faq/FaqManagement";
+import SubscriptionManagement from "./pages/Subscription/SunscriptionManagement";
 
 export default function App() {
   return (
@@ -31,48 +36,50 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/reset-password" element={<ForgotPassword />} />
+
           {/* Dashboard Layout */}
+          {/* <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          > */}
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
+            <Route path="/category" element={<CategoryManagement />} />
+            <Route path="/bid" element={<Bid />} />
+            <Route path="/customer-analytics" element={<CutomersAnalytics />} />
             <Route
-              index
-              path="/customer-analytics"
-              element={<CutomersAnalytics />}
-            />
-            <Route
-              index
               path="/customer-management"
               element={<CustomerManagement />}
             />
+            <Route path="/customer-details/:id" element={<CustomerDetails />} />
             <Route
-              index
-              path="/customer-details/:id"
-              element={<CustomerDetails />}
-            />
-            <Route
-              index
               path="/providers-management"
               element={<ProvidersManagement />}
             />
             <Route
-              index
               path="/providers-analytics"
               element={<ProvidersAnalytics />}
             />
             <Route
-              index
               path="/providers-details/:id"
               element={<ProviderDetails />}
             />
-            <Route index path="/orders" element={<Orders />} />
-            <Route index path="/transaction" element={<Transaction />} />
-            <Route index path="/notification" element={<NotifyMessages />} />
-            <Route index path="/media" element={<WhatsAppMedia />} />
-            <Route index path="/mail" element={<Mail />} />
-            <Route index path="/ads" element={<Ads />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/transaction" element={<Transaction />} />
+            <Route path="/notification" element={<NotifyMessages />} />
+            <Route path="/media" element={<WhatsAppMedia />} />
+            <Route path="/mail" element={<Mail />} />
+            <Route path="/ads" element={<Ads />} />
             <Route path="/cms" element={<PrivacyPolicyPage />} />
+            <Route path="/faq" element={<FaqManagement />} />
+            <Route path="/subscription" element={<SubscriptionManagement />} />
 
-            <Route index path="/tickets" element={<Tickets />} />
+            <Route path="/tickets" element={<Tickets />} />
 
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />
