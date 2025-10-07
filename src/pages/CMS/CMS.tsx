@@ -48,7 +48,7 @@ const CMSPrivacyEditor = ({ userType }) => {
         activeKey={selectedPolicyTab}
         onChange={setSelectedPolicyTab}
         size="large"
-        className="mb-4"
+        className="mb-2"
       >
         <TabPane tab="Terms & Conditions" key="terms-condition" />
         <TabPane tab="Privacy" key="privacy-policy" />
@@ -111,7 +111,7 @@ const CMSPage = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
+    <div className="max-w-6xl mx-auto p-0">
       <PageBreadcrumb pageTitle="Cms Editor" />
 
 
