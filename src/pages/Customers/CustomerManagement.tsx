@@ -82,14 +82,14 @@ const CustomerManagement = () => {
       render: (text) => text || "N/A",
     },
     {
-      title: "Profile Image",
+      title: "Profile",
       dataIndex: "image",
       render: (url) =>
         url ? (
           <img
             src={url}
             alt="profile"
-            style={{ width: 40, borderRadius: "50%" }}
+            style={{ width: 40, borderRadius: "10%", height:50 }}
           />
         ) : (
           "No Image"
@@ -266,9 +266,9 @@ const CustomerManagement = () => {
             rowKey="id"
             scroll={{ x: "max-content" }}
             pagination={{
-              pageSizeOptions: ["5", "10", "15"],
+              pageSizeOptions: ["25", "50", "100"],
               showSizeChanger: true,
-              defaultPageSize: 5,
+              defaultPageSize: 15,
             }}
           />
         </>

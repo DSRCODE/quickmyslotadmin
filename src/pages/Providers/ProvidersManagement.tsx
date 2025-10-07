@@ -355,9 +355,9 @@ const ProvidersManagement = () => {
             rowKey="id"
             scroll={{ x: "max-content" }}
             pagination={{
-              pageSizeOptions: ["5", "10", "15"],
+              pageSizeOptions: ["25", "50", "100"],
               showSizeChanger: true,
-              defaultPageSize: 5,
+              defaultPageSize: 15,
             }}
           />
         </>
