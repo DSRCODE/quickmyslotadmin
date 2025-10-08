@@ -22,17 +22,17 @@ export function AuthProvider({ children }) {
       console.log("Login API Response:", response);
 
       // Save user & token in localStorage
-      localStorage.setItem("token", response?.data?.token);
-      localStorage.setItem("user", JSON.stringify(response?.data?.user));
+      localStorage.setItem("token", response?.token);
+      localStorage.setItem("user", JSON.stringify(response?.user));
 
       // Update user state
-      setUser(response?.data?.user);
+      setUser(response?.user);
 
       toast.success("Login successful!");
     } catch (error) {
       console.error("Login failed:", error);
       toast.error(
-        error?.data?.message || "Login failed! Please check credentials."
+        error?.message || "Login failed! Please check credentials."
       );
     }
   }

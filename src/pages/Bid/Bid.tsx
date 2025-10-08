@@ -20,18 +20,26 @@ import {
   useDeleteBidMutation,
   useBidApprovedMutation,
   useBidRejectMutation,
+  useGetbidDetailsQuery,
+  useGetbidEntryListQuery,
 } from "../../redux/api/bidApi";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { useSidebar } from "../../context/SidebarContext";
 import { Pencil, Trash2, CheckCircle, XCircle } from "lucide-react";
 import { formatDate } from "../../utils/utils";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 const Bid = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+  const navigate = useNavigate();
 
   const { data, isLoading, refetch } = useGetbidQuery("");
-  console.log(data);
+  const { data: bidDetals, isLoading: detailLoading } =
+    useGetbidDetailsQuery(1);
+  const { data: bidEntry, isLoading: BitEntrydetailLoading } =
+    useGetbidEntryListQuery(2);
+  console.log(bidEntry);
   const [addBid] = useAddBidMutation();
   const [updateBid] = useUpdateBidMutation();
   const [deleteBid] = useDeleteBidMutation();
@@ -124,7 +132,19 @@ const Bid = () => {
   };
 
   const columns = [
-    { title: "Title", dataIndex: "title", key: "title" },
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      render: (text, record) => (
+        <span
+          className="text-blue-600 cursor-pointer hover:underline"
+          onClick={() => navigate(`/bid-details/${record.category_id}`)}
+        >
+          {text}
+        </span>
+      ),
+    },
     { title: "Description", dataIndex: "description", key: "description" },
     {
       title: "Bid Date",
@@ -174,24 +194,24 @@ const Bid = () => {
           </Popconfirm>
 
           {/* Approve */}
-          <Tooltip title="Approve Bid">
+          {/* <Tooltip title="Approve Bid">
             <Button
               size="small"
               className="!bg-green-600 hover:!bg-green-700 !text-white flex items-center justify-center !rounded-md shadow-sm"
               icon={<CheckCircle size={16} />}
               onClick={() => handleApprove(record.id || record._id)}
             />
-          </Tooltip>
+          </Tooltip> */}
 
           {/* Reject */}
-          <Tooltip title="Reject Bid">
+          {/* <Tooltip title="Reject Bid">
             <Button
               size="small"
               className="!bg-gray-500 hover:!bg-gray-600 !text-white flex items-center justify-center !rounded-md shadow-sm"
               icon={<XCircle size={16} />}
               onClick={() => handleReject(record.id || record._id)}
             />
-          </Tooltip>
+          </Tooltip> */}
         </div>
       ),
     },

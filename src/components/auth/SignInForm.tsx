@@ -16,7 +16,7 @@ export default function SignInForm() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("email", e.target.email.value);
+    formData.append("email_or_phone", e.target.email.value);
     formData.append("password", e.target.password.value);
 
     const res = await login(formData);

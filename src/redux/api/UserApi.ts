@@ -30,6 +30,10 @@ export const UserApi = createApi({
       query: () => "admin/user/list",
       providesTags: ["User"],
     }),
+    getUsersDetails: builder.query<any, void>({
+      query: (id) => `customer/shops/${id}`,
+      providesTags: ["User"],
+    }),
 
     // Delete User
     deleteUser: builder.mutation({
@@ -66,6 +70,7 @@ export const UserApi = createApi({
 export const {
   useAddUserMutation,
   useGetUsersQuery,
+  useGetUsersDetailsQuery,
   useDeleteUserMutation,
   useEditUserMutation,
   useUpdateUserStatusMutation,

@@ -29,6 +29,7 @@ import ProtectedRoute from "./context/ProtectedRoute";
 import CategoryManagement from "./pages/Category/CategoryManagement";
 import FaqManagement from "./pages/Faq/FaqManagement";
 import SubscriptionManagement from "./pages/Subscription/SunscriptionManagement";
+import BidDetails from "./pages/Bid/BidDetails";
 
 export default function App() {
   return (
@@ -40,17 +41,19 @@ export default function App() {
           <Route path="/reset-password" element={<ForgotPassword />} />
 
           {/* Dashboard Layout */}
-          {/* <Route
+          <Route
             element={
               <ProtectedRoute>
                 <AppLayout />
               </ProtectedRoute>
             }
-          > */}
-          <Route element={<AppLayout />}>
+          >
+            {/* <Route element={<AppLayout />}> */}
             <Route index path="/" element={<Home />} />
             <Route path="/category" element={<CategoryManagement />} />
             <Route path="/bid" element={<Bid />} />
+            <Route path="/bid-details/:categoryId" element={<BidDetails />} />
+
             <Route path="/customer-analytics" element={<CutomersAnalytics />} />
             <Route
               path="/customer-management"

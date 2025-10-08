@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Col, Row, Table, Tag } from "antd";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import { useGetUsersDetailsQuery } from "../../redux/api/UserApi";
 
 const customer = {
   id: 1,
@@ -51,6 +52,8 @@ const customer = {
 };
 
 const CustomerDetails = () => {
+
+  // const { data } = useGetUsersDetailsQuery(4);
   const ordersColumns = [
     {
       title: "Order Number",

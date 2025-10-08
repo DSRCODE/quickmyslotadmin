@@ -19,6 +19,14 @@ export const bidApi = createApi({
       query: () => `admin/bids`,
       providesTags: ["bidApi"],
     }),
+    getbidDetails: builder.query({
+      query: (id) => `admin/bids/${id}`,
+      providesTags: ["bidApi"],
+    }),
+    getbidEntryList: builder.query({
+      query: (id) => `bids/${id}/entries`,
+      providesTags: ["bidApi"],
+    }),
 
     // Add (POST) bid
     addBid: builder.mutation({
@@ -68,6 +76,8 @@ export const bidApi = createApi({
 
 export const {
   useGetbidQuery,
+  useGetbidDetailsQuery,
+  useGetbidEntryListQuery,
   useAddBidMutation,
   useBidApprovedMutation,
   useBidRejectMutation,
