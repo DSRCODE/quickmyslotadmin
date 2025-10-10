@@ -20,7 +20,7 @@ export default function Home() {
           <div className="flex items-center gap-3 flex-wrap">
             <img
               className="dark:hidden"
-              src="/lo.png"
+              src="/logo.png"
               alt="Logo"
               width={40}
               height={30}

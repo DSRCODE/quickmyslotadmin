@@ -213,7 +213,7 @@ const AppSidebar: React.FC = () => {
             <div className="flex  gap-2 items-center text-primary font-bold text-[16px]">
               <img
                 className="dark:hidden"
-                src="/lo.png"
+                src="/logo.png"
                 alt="Logo"
                 width={40}
                 height={40}
@@ -225,7 +225,7 @@ const AppSidebar: React.FC = () => {
               </div>
             </div>
           ) : (
-            <img src="/lo.png" alt="Logo" width={32} height={32} />
+            <img src="/logo.png" alt="Logo" width={32} height={32} />
             // <div className="flex items-center gap-2 text-primary font-bold text-xl">
             //   <Warehouse className="h-6 w-6 text-primary text-[#4f4981]" />
             // </div>
