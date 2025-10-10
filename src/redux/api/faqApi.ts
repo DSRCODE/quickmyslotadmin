@@ -16,7 +16,7 @@ export const faqApi = createApi({
   endpoints: (builder) => ({
     // Get All faq
     getfaq: builder.query({
-      query: () => `admin/faq-support`,
+      query: ({ role }) => `admin/faq-support?role=${role}`,
       providesTags: ["faqApi"],
     }),
 

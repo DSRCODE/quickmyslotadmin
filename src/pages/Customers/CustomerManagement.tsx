@@ -125,15 +125,15 @@ const CustomerManagement = () => {
         </Tag>
       ),
     },
-    {
-      title: "Verified",
-      dataIndex: "is_verified",
-      render: (verified) => (
-        <Tag color={verified ? "green" : "orange"}>
-          {verified ? "Verified" : "Not Verified"}
-        </Tag>
-      ),
-    },
+    // {
+    //   title: "Verified",
+    //   dataIndex: "is_verified",
+    //   render: (verified) => (
+    //     <Tag color={verified ? "green" : "orange"}>
+    //       {verified ? "Verified" : "Not Verified"}
+    //     </Tag>
+    //   ),
+    // },
     {
       title: "Business Name",
       dataIndex: "business_name",
