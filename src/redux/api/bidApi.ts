@@ -15,6 +15,7 @@ export const bidApi = createApi({
   tagTypes: ["bidApi"],
   endpoints: (builder) => ({
     // Get All bid
+
     getbid: builder.query({
       query: () => `admin/bids`,
       providesTags: ["bidApi"],

@@ -11,6 +11,7 @@ import {
   TimePicker,
   Spin,
   Tooltip,
+  Select,
 } from "antd";
 import dayjs from "dayjs";
 import {
@@ -29,11 +30,14 @@ import { Pencil, Trash2, CheckCircle, XCircle } from "lucide-react";
 import { formatDate } from "../../utils/utils";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
+import { useGetcategoryQuery } from "../../redux/api/categoryApi";
 
 const Bid = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
   const navigate = useNavigate();
 
+  const { data: category } = useGetcategoryQuery("");
+  console.log(category?.data);
   const { data, isLoading, refetch } = useGetbidQuery("");
   // const { data: bidDetals, isLoading: detailLoading } =
   //   useGetbidDetailsQuery(1);
@@ -263,12 +267,19 @@ const Bid = () => {
       >
         <Form form={form} layout="vertical">
           <Form.Item
-            label="Category ID"
+            label="Category"
             name="category_id"
-            rules={[{ required: true, message: "Please enter category ID" }]}
+            rules={[{ required: true, message: "Please select category" }]}
           >
-            <Input placeholder="Enter category ID" />
+            <Select placeholder="Select category">
+              {category?.data?.map((cat) => (
+                <Select.Option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
+
           <Form.Item
             label="Title"
             name="title"
