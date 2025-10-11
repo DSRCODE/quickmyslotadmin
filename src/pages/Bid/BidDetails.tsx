@@ -113,6 +113,20 @@ const BidDetails = () => {
       title: "Actions",
       key: "actions",
       render: (_, record) => {
+        if (record.status === 1) {
+          return (
+            <Tooltip title="This bid has been awarded">
+              <Button
+                size="small"
+                icon={<Award size={16} />}
+                disabled
+                className="!bg-gray-300 !text-gray-700 flex items-center justify-center !rounded-md shadow-sm"
+              >
+                Awarded
+              </Button>
+            </Tooltip>
+          );
+        }
         return (
           <Tooltip title="Award Bid to this User">
             <Button
