@@ -1,118 +1,108 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tabs, Table, Button } from "antd";
 import jsPDF from "jspdf";
-import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import autoTable from "jspdf-autotable";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import { useGettransactionQuery } from "../../redux/api/transactionApi";
 
 const { TabPane } = Tabs;
 
-const dummyDebitData = [
-  {
-    key: 1,
-    date: "2025-08-01",
-    description: "Payment to Supplier",
-    amount: 150,
-    transactionId: "D1001",
-  },
-  {
-    key: 2,
-    date: "2025-08-05",
-    description: "Refund Issued",
-    amount: 50,
-    transactionId: "D1002",
-  },
-];
-
-const dummyCreditData = [
-  {
-    key: 1,
-    date: "2025-08-02",
-    description: "Sale Income",
-    amount: 200,
-    transactionId: "C1001",
-  },
-  {
-    key: 2,
-    date: "2025-08-06",
-    description: "Bank Interest",
-    amount: 20,
-    transactionId: "C1002",
-  },
-];
-
-const columns = [
-  { title: "Date", dataIndex: "date", key: "date" },
-  { title: "Description", dataIndex: "description", key: "description" },
-  {
-    title: "Amount",
-    dataIndex: "amount",
-    key: "amount",
-    render: (val) => `$${val.toFixed(2)}`,
-  },
-  { title: "Transaction ID", dataIndex: "transactionId", key: "transactionId" },
-];
-
 const Transaction = () => {
-  // Function to generate PDF invoice for transactions
-const downloadInvoice = (type: string, data: any[]) => {
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text(`Transaction History - ${type}`, 14, 22);
-  doc.setFontSize(11);
-  doc.setTextColor(100);
+  const [activeRole, setActiveRole] = useState("customer");
 
-  const tableColumn = ["Date", "Description", "Amount", "Transaction ID"];
-  const tableRows = data.map((txn) => [
-    txn.date,
-    txn.description,
-    `$${txn.amount.toFixed(2)}`,
-    txn.transactionId,
-  ]);
-
-  autoTable(doc, {
-    head: [tableColumn],
-    body: tableRows,
-    startY: 30,
+  // Fetch transactions based on active role
+  const { data, isLoading, isFetching } = useGettransactionQuery({
+    role: activeRole,
   });
 
-  doc.save(`Transaction_History_${type}.pdf`);
-};
+  // Flattened transaction list
+  const transactions = data?.data || [];
 
+  // Table Columns including Action with Invoice button
+  const columns = [
+    {
+      title: "Date",
+      dataIndex: "created_at",
+      key: "date",
+      render: (date) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: "Description",
+      dataIndex: "payment_mode",
+      key: "description",
+      render: (_, record) =>
+        `${record.type === "credit" ? "Credit" : "Debit"}: ${
+          record.payment_mode
+        }`,
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      render: (val) => `₹${parseFloat(val).toFixed(2)}`,
+    },
+    {
+      title: "Transaction ID",
+      dataIndex: "transaction_id",
+      key: "transactionId",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Button type="link" onClick={() => downloadSingleInvoice(record)}>
+          Invoice
+        </Button>
+      ),
+    },
+  ];
+
+  // Generate PDF of a single transaction
+  const downloadSingleInvoice = (txn) => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text(`Transaction Invoice`, 14, 22);
+    doc.setFontSize(12);
+    doc.text(`Role: ${activeRole}`, 14, 32);
+    doc.text(`Date: ${new Date(txn.created_at).toLocaleDateString()}`, 14, 40);
+    doc.text(
+      `Description: ${txn.type === "credit" ? "Credit" : "Debit"} - ${
+        txn.payment_mode
+      }`,
+      14,
+      48
+    );
+    doc.text(`Amount: ₹${parseFloat(txn.amount).toFixed(2)}`, 14, 56);
+    doc.text(`Transaction ID: ${txn.transaction_id}`, 14, 64);
+
+    doc.save(`Invoice_${txn.transaction_id}.pdf`);
+  };
 
   return (
     <div style={{ padding: 24 }}>
       <PageBreadcrumb pageTitle="Transaction History" />
-      <Tabs defaultActiveKey="debit" animated type="line">
-        <TabPane tab="Debit" key="debit">
-          <Button
-            type="primary"
-            style={{ marginBottom: 16 }}
-            onClick={() => downloadInvoice("Debit", dummyDebitData)}
-          >
-            Download Debit Invoice
-          </Button>
-          <Table
-            dataSource={dummyDebitData}
-            columns={columns}
-            pagination={false}
-          />
-        </TabPane>
-
-        <TabPane tab="Credit" key="credit">
-          <Button
-            type="primary"
-            style={{ marginBottom: 16 }}
-            onClick={() => downloadInvoice("Credit", dummyCreditData)}
-          >
-            Download Credit Invoice
-          </Button>
-          <Table
-            dataSource={dummyCreditData}
-            columns={columns}
-            pagination={false}
-          />
-        </TabPane>
+      <Tabs
+        activeKey={activeRole}
+        onChange={setActiveRole}
+        type="line"
+        animated
+      >
+        <TabPane tab="Customer" key="customer" />
+        <TabPane tab="Vendor" key="vendor" />
       </Tabs>
+
+      <Table
+        columns={columns}
+        dataSource={transactions}
+        rowKey="id"
+        loading={isFetching}
+        scroll={{ x: "max-content" }}
+        pagination={{
+          pageSizeOptions: ["5", "10", "15"],
+          showSizeChanger: true,
+          defaultPageSize: 5,
+        }}
+      />
     </div>
   );
 };

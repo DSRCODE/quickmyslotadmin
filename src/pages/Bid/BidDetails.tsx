@@ -9,8 +9,11 @@ import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { formatDate } from "../../utils/utils";
 import { toast } from "react-toastify";
 import { CheckCircle, Award } from "lucide-react";
+import { useSidebar } from "../../context/SidebarContext";
 
 const BidDetails = () => {
+    const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+  
   const { categoryId } = useParams();
 
   // Fetch bid entries for this category
@@ -81,11 +84,19 @@ const BidDetails = () => {
       key: "status",
       render: (status) => {
         switch (status) {
+          case 0:
+            return <Tag color="orange">Pending</Tag>;
           case 1:
-            return <Tag color="default">Pending</Tag>;
+            return <Tag color="green">Approved</Tag>;
           case 2:
             return <Tag color="green">Approved</Tag>;
           case 3:
+            return <Tag color="green">Approved</Tag>;
+          case 4:
+            return <Tag color="green">Approved</Tag>;
+          case 5:
+            return <Tag color="green">Approved</Tag>;
+          case 6:
             return <Tag color="red">Rejected</Tag>;
           default:
             return <Tag>Unknown</Tag>;
@@ -102,32 +113,30 @@ const BidDetails = () => {
       title: "Actions",
       key: "actions",
       render: (_, record) => {
-        const isTopBidder = parseFloat(record.amount) === highestAmount;
-
-        // Show "Award" button only for the top bidder and if not already approved
-        if (isTopBidder && record.status !== 2) {
-          return (
-            <Tooltip title="Award Bid to this User">
-              <Button
-                size="small"
-                className="!bg-green-600 hover:!bg-green-700 !text-white flex items-center justify-center !rounded-md shadow-sm"
-                icon={<Award size={16} />}
-                onClick={() => handleApprove(record.id || record._id)}
-              >
-                Award
-              </Button>
-            </Tooltip>
-          );
-        }
-
-        // No action for others
-        return null;
+        return (
+          <Tooltip title="Award Bid to this User">
+            <Button
+              size="small"
+              className="!bg-green-600 hover:!bg-green-700 !text-white flex items-center justify-center !rounded-md shadow-sm"
+              icon={<Award size={16} />}
+              onClick={() => handleApprove(record.id || record._id)}
+            >
+              Award
+            </Button>
+          </Tooltip>
+        );
       },
     },
   ];
 
   return (
-    <div className="p-4">
+    <div
+      className={`flex-1 transition-all duration-300 ease-in-out ${
+        isExpanded || isHovered
+          ? "lg:pl-0 lg:w-[1190px]"
+          : "lg:pl-[0px] lg:w-[1390px]"
+      } ${isMobileOpen ? "ml-0" : ""}`}
+    >
       <PageBreadcrumb pageTitle={`Bidders for Category #${categoryId}`} />
 
       <Card className="shadow-md mt-4">

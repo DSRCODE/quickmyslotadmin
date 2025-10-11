@@ -18,7 +18,12 @@ const FaqManagement = () => {
   const [activeRole, setActiveRole] = useState("customer");
 
   // ✅ API hooks (refetch when role changes)
-  const { data, isLoading, refetch } = useGetfaqQuery({ role: activeRole });
+  const {
+    data,
+    isLoading,
+    refetch,
+    isFetching
+  } = useGetfaqQuery({ role: activeRole });
   const [addFaq, { isLoading: adding }] = useAddfaqMutation();
   const [updateFaq, { isLoading: updating }] = useUpdatefaqMutation();
   const [deleteFaq, { isLoading: deleting }] = useDeletefaqMutation();
@@ -97,7 +102,7 @@ const FaqManagement = () => {
           className="mb-4"
         >
           <TabPane tab="Customer" key="customer" />
-          <TabPane tab="Provider" key="provider" />
+          <TabPane tab="Provider" key="vendor" />
         </Tabs>
 
         <Button
@@ -148,6 +153,7 @@ const FaqManagement = () => {
                   ),
                 },
               ]}
+              loading={isFetching}
               pagination={false}
             />
           )}

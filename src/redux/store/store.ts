@@ -16,6 +16,7 @@ import { authApi } from "../api/authApi";
 import { categoryApi } from "../api/categoryApi";
 import { faqApi } from "../api/faqApi";
 import { subscriptionApi } from "../api/subscriptionApi";
+import { transactionApi } from "../api/transactionApi";
 
 export const store = configureStore({
   reducer: {
@@ -35,6 +36,7 @@ export const store = configureStore({
     [authApi.reducerPath]: authApi.reducer,
     [faqApi.reducerPath]: faqApi.reducer,
     [subscriptionApi.reducerPath]: subscriptionApi.reducer,
+    [transactionApi.reducerPath]: transactionApi.reducer,
     [chargeApi.reducerPath]: chargeApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -54,6 +56,7 @@ export const store = configureStore({
       .concat(authApi.middleware)
       .concat(categoryApi.middleware)
       .concat(faqApi.middleware)
+      .concat(transactionApi.middleware)
       .concat(subscriptionApi.middleware)
       .concat(chargeApi.middleware),
 });

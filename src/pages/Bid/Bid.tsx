@@ -35,11 +35,11 @@ const Bid = () => {
   const navigate = useNavigate();
 
   const { data, isLoading, refetch } = useGetbidQuery("");
-  const { data: bidDetals, isLoading: detailLoading } =
-    useGetbidDetailsQuery(1);
-  const { data: bidEntry, isLoading: BitEntrydetailLoading } =
-    useGetbidEntryListQuery(2);
-  console.log(bidEntry);
+  // const { data: bidDetals, isLoading: detailLoading } =
+  //   useGetbidDetailsQuery(1);
+  // const { data: bidEntry, isLoading: BitEntrydetailLoading } =
+  //   useGetbidEntryListQuery(2);
+  // console.log(bidEntry);
   const [addBid] = useAddBidMutation();
   const [updateBid] = useUpdateBidMutation();
   const [deleteBid] = useDeleteBidMutation();
@@ -139,7 +139,7 @@ const Bid = () => {
       render: (text, record) => (
         <span
           className="text-blue-600 cursor-pointer hover:underline"
-          onClick={() => navigate(`/bid-details/${record.category_id}`)}
+          onClick={() => navigate(`/bid-details/${record.id}`)}
         >
           {text}
         </span>
