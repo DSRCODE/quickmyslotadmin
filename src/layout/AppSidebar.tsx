@@ -215,13 +215,13 @@ const AppSidebar: React.FC = () => {
                 className="dark:hidden"
                 src="/logo.png"
                 alt="Logo"
-                width={40}
-                height={40}
+                width={30}
+                height={20}
               />
               <div>
-                <span className="tracking-wide text-[#EE4E34] ">QUICK</span>
-                <span className="tracking-wide  text-[#090A14] ">MY</span>
-                <span className="tracking-wide  text-[#090A14] ">SLOT</span>
+                <span className="tracking-wide text-[#090A14] ">QUICK</span>
+                <span className="tracking-wide  text-[#EE4E34] ">MY</span>
+                <span className="tracking-wide   text-[#EE4E34] ">SLOT</span>
               </div>
             </div>
           ) : (
