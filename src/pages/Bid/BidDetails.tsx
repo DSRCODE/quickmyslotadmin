@@ -12,8 +12,8 @@ import { CheckCircle, Award } from "lucide-react";
 import { useSidebar } from "../../context/SidebarContext";
 
 const BidDetails = () => {
-    const { isExpanded, isHovered, isMobileOpen } = useSidebar();
-  
+  const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+
   const { categoryId } = useParams();
 
   // Fetch bid entries for this category
@@ -87,7 +87,7 @@ const BidDetails = () => {
           case 0:
             return <Tag color="orange">Pending</Tag>;
           case 1:
-            return <Tag color="green">Approved</Tag>;
+            return <Tag color="green">Awarded</Tag>;
           case 2:
             return <Tag color="green">Approved</Tag>;
           case 3:

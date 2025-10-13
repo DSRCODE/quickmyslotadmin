@@ -162,11 +162,17 @@ const Bid = () => {
       key: "bid_end_date",
       render: (text) => <span>{formatDate(text)}</span>,
     },
-    { title: "Start Time", dataIndex: "start_time", key: "start_time" },
+    {
+      title: "Start Time",
+      dataIndex: "start_time",
+      key: "start_time",
+      render: (time) => (time ? time.slice(0, 5) : "-"),
+    },
     {
       title: "End Time",
       dataIndex: "end_time",
       key: "end_time",
+      render: (time) => (time ? time.slice(0, 5) : "-"),
     },
     {
       title: "Actions",
