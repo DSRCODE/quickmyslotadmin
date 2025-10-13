@@ -143,7 +143,9 @@ const Bid = () => {
       render: (text, record) => (
         <span
           className="text-blue-600 cursor-pointer hover:underline"
-          onClick={() => navigate(`/bid-details/${record.id}`)}
+          onClick={() =>
+            navigate(`/bid-details/${record.id}/${record?.category?.name}`)
+          }
         >
           {text}
         </span>
@@ -174,6 +176,7 @@ const Bid = () => {
       key: "end_time",
       render: (time) => (time ? time.slice(0, 5) : "-"),
     },
+    { title: "Bid Category", dataIndex: ["category", "name"], key: "category" },
     {
       title: "Actions",
       key: "actions",

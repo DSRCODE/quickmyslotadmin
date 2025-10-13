@@ -52,7 +52,7 @@ export default function App() {
             <Route index path="/" element={<Home />} />
             <Route path="/category" element={<CategoryManagement />} />
             <Route path="/bid" element={<Bid />} />
-            <Route path="/bid-details/:categoryId" element={<BidDetails />} />
+            <Route path="/bid-details/:categoryId/:type" element={<BidDetails />} />
 
             <Route path="/customer-analytics" element={<CutomersAnalytics />} />
             <Route

@@ -128,7 +128,7 @@ const navItems: NavItem[] = [
     icon: <Settings />,
     name: "App Settings",
     subItems: [
-      { name: "Banner", icon: <Image />, path: "/ads", pro: false },
+      { name: "Ads", icon: <Image />, path: "/ads", pro: false },
       { name: "CMS", icon: <FileText />, path: "/cms", pro: false },
       {
         name: "Notification",

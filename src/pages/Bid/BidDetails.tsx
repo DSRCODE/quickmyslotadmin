@@ -14,7 +14,7 @@ import { useSidebar } from "../../context/SidebarContext";
 const BidDetails = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
-  const { categoryId } = useParams();
+  const { categoryId, type } = useParams();
 
   // Fetch bid entries for this category
   const { data, isLoading, refetch } = useGetbidEntryListQuery(categoryId);
@@ -151,7 +151,7 @@ const BidDetails = () => {
           : "lg:pl-[0px] lg:w-[1390px]"
       } ${isMobileOpen ? "ml-0" : ""}`}
     >
-      <PageBreadcrumb pageTitle={`Bidders for Category #${categoryId}`} />
+      <PageBreadcrumb pageTitle={`Bidders for Category #${type}`} />
 
       <Card className="shadow-md mt-4">
         {isLoading ? (

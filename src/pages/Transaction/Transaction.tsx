@@ -4,10 +4,13 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { useGettransactionQuery } from "../../redux/api/transactionApi";
+import { useSidebar } from "../../context/SidebarContext";
 
 const { TabPane } = Tabs;
 
 const Transaction = () => {
+  const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+
   const [activeRole, setActiveRole] = useState("customer");
 
   // Fetch transactions based on active role
@@ -23,28 +26,89 @@ const Transaction = () => {
     {
       title: "Date",
       dataIndex: "created_at",
-      key: "date",
-      render: (date) => new Date(date).toLocaleDateString(),
+      key: "created_at",
+      render: (date) => new Date(date).toLocaleString(),
     },
     {
-      title: "Description",
+      title: "User Name",
+      dataIndex: ["user", "name"],
+      key: "user_name",
+      render: (name) => name || "N/A",
+    },
+    {
+      title: "Transaction Type",
+      dataIndex: "type",
+      key: "type",
+      render: (type) => (
+        <span
+          className={`px-2 py-1 rounded-md text-white ${
+            type === "credit" ? "bg-green-500" : "bg-red-500"
+          }`}
+        >
+          {type?.toUpperCase()}
+        </span>
+      ),
+    },
+    {
+      title: "Payment Mode",
       dataIndex: "payment_mode",
-      key: "description",
-      render: (_, record) =>
-        `${record.type === "credit" ? "Credit" : "Debit"}: ${
-          record.payment_mode
-        }`,
+      key: "payment_mode",
+      render: (mode) =>
+        mode ? mode.charAt(0).toUpperCase() + mode.slice(1) : "N/A",
     },
     {
-      title: "Amount",
+      title: "Amount (₹)",
       dataIndex: "amount",
       key: "amount",
-      render: (val) => `₹${parseFloat(val).toFixed(2)}`,
+      render: (val, record) => (
+        <span
+          className={`font-semibold ${
+            record.type === "credit" ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          ₹{parseFloat(val || 0).toFixed(2)}
+        </span>
+      ),
+    },
+    {
+      title: "Payment Status",
+      dataIndex: "payment_status",
+      key: "payment_status",
+      render: (status) => (
+        <span
+          className={`px-2 py-1 rounded-md text-white ${
+            status === "success"
+              ? "bg-green-500"
+              : status === "pending"
+              ? "bg-yellow-500"
+              : "bg-red-500"
+          }`}
+        >
+          {status ? status.toUpperCase() : "N/A"}
+        </span>
+      ),
     },
     {
       title: "Transaction ID",
       dataIndex: "transaction_id",
-      key: "transactionId",
+      key: "transaction_id",
+    },
+    {
+      title: "Order ID",
+      dataIndex: "order_id",
+      key: "order_id",
+    },
+    {
+      title: "Reference ID",
+      dataIndex: "reference_id",
+      key: "reference_id",
+      render: (id) => id || "N/A",
+    },
+    {
+      title: "Currency",
+      dataIndex: "currency",
+      key: "currency",
+      render: (val) => val?.toUpperCase() || "INR",
     },
     {
       title: "Action",
@@ -79,7 +143,13 @@ const Transaction = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div
+      className={`flex-1  transition-all duration-300 ease-in-out ${
+        isExpanded || isHovered
+          ? "lg:pl-0 lg:w-[1190px]"
+          : "lg:pl-[0px] lg:w-[1390px]"
+      } ${isMobileOpen ? "ml-0" : ""}`}
+    >
       <PageBreadcrumb pageTitle="Transaction History" />
       <Tabs
         activeKey={activeRole}
@@ -98,9 +168,9 @@ const Transaction = () => {
         loading={isFetching}
         scroll={{ x: "max-content" }}
         pagination={{
-          pageSizeOptions: ["5", "10", "15"],
+          pageSizeOptions: ["15", "25", "50"],
           showSizeChanger: true,
-          defaultPageSize: 5,
+          defaultPageSize: 15,
         }}
       />
     </div>

@@ -180,17 +180,20 @@ const Ads = () => {
         onChange={setActiveTab}
         style={{ marginBottom: 20 }}
       >
-        <TabPane tab="Customer Banners" key="user" />
-        <TabPane tab="Provider Banners" key="vendor" />
+        <TabPane tab="Customer Ads" key="user" />
+        <TabPane tab="Provider Ads" key="vendor" />
       </Tabs>
 
       <Button
         onClick={openModal}
         style={{ marginBottom: 20, backgroundColor: "#007FFF", color: "white" }}
       >
-        Add New Image/Video/Url
+        Add New Image/Video
       </Button>
-
+      <p className="text-center text-sm text-gray-600 italic">
+        Note: Ad image dimensions should be{" "}
+        <span className="font-semibold">300x150 px</span> for optimal display.
+      </p>
       {/* Inner Tabs */}
       <Tabs
         activeKey={internalTab}
@@ -199,12 +202,15 @@ const Ads = () => {
       >
         <TabPane tab="Images" key="image" />
         <TabPane tab="Videos" key="video" />
-        <TabPane tab="URLs" key="url" />
+        {/* <TabPane tab="URLs" key="url" /> */}
       </Tabs>
 
       {/* Ads Grid */}
       {isLoading ? (
-        <Spin tip="Loading ads..." />
+        <div className="flex border justify-center flex-col items-center h-[40vh]">
+          <Spin tip="Loading ads..." />
+          <p className="font-bold text-orange-600 mt-4">Loading ads....</p>
+        </div>
       ) : (
         <Row gutter={[16, 16]}>
           {filteredAds.map((ad) => (
@@ -231,7 +237,12 @@ const Ads = () => {
                     type="text"
                     danger
                     icon={<DeleteOutlined />}
-                    style={{ position: "absolute", top: 8, right: 8 }}
+                    style={{
+                      position: "absolute",
+                      top: 10,
+                      right: 12,
+                      backgroundColor: "#F5F5F5",
+                    }}
                   />
                 </Popconfirm>
               </div>
@@ -269,7 +280,7 @@ const Ads = () => {
         >
           <Radio value="image">Image</Radio>
           <Radio value="video">Video</Radio>
-          <Radio value="url">URL</Radio>
+          {/* <Radio value="url">URL</Radio> */}
         </Radio.Group>
 
         {contentType === "url" && (
@@ -281,12 +292,36 @@ const Ads = () => {
           />
         )}
 
-        <Input
-          placeholder="Enter Position"
-          value={positionInput}
-          onChange={(e) => setPositionInput(e.target.value)}
-          style={{ marginBottom: "8px" }}
-        />
+        <div
+          style={{
+            marginBottom: "8px",
+            display: "flex",
+            gap: "10px",
+            alignItems: "center",
+          }}
+        >
+          <label>
+            <input
+              type="radio"
+              name="bannerPosition"
+              value="top"
+              checked={positionInput === "top"}
+              onChange={() => setPositionInput("top")}
+            />
+            Upper banner Ads
+          </label>
+          <br />
+          <label>
+            <input
+              type="radio"
+              name="bannerPosition"
+              value="bottom"
+              checked={positionInput === "bottom"}
+              onChange={() => setPositionInput("bottom")}
+            />
+            Lower Banner Ads
+          </label>
+        </div>
 
         {(contentType === "image" || contentType === "video") && (
           <Upload
