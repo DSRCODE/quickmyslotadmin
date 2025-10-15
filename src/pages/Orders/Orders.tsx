@@ -98,7 +98,7 @@ const Orders = () => {
       } ${isMobileOpen ? "ml-0" : ""}`}
     >
       <PageBreadcrumb pageTitle="Orders History" />
-      <Tabs
+      {/* <Tabs
         activeKey={activeRole}
         onChange={setActiveRole}
         type="line"
@@ -106,7 +106,7 @@ const Orders = () => {
       >
         <TabPane tab="Customer" key="customer" />
         <TabPane tab="Vendor" key="vendor" />
-      </Tabs>
+      </Tabs> */}
 
       <Table
         columns={columns}

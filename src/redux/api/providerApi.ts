@@ -60,6 +60,24 @@ export const providerApi = createApi({
       }),
       invalidatesTags: ["provider"],
     }),
+    // Update IsHighlighted Status
+    updateproviderIsHighlighted: builder.mutation({
+      query: (formdata) => ({
+        url: `admin/vendor_highlighted`,
+        method: "POST",
+        body: formdata,
+      }),
+      invalidatesTags: ["provider"],
+    }),
+    // Add Cashback
+    addproviderCashback: builder.mutation({
+      query: (providerData) => ({
+        url: "admin/vendor_cashback",
+        method: "POST",
+        body: providerData,
+      }),
+      invalidatesTags: ["provider"],
+    }),
   }),
 });
 
@@ -69,4 +87,6 @@ export const {
   useDeleteproviderMutation,
   useEditproviderMutation,
   useUpdateproviderStatusMutation,
+  useUpdateproviderIsHighlightedMutation,
+  useAddproviderCashbackMutation
 } = providerApi;
