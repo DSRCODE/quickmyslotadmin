@@ -1,30 +1,19 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Table,
-  Modal,
-  Input,
-  Select,
-  DatePicker,
-  Space,
-  Popconfirm,
-  message,
-} from "antd";
-import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import { Button, Table, Space, Popconfirm, message } from "antd";
 import moment from "moment";
-
-const { Option } = Select;
-
-const dummyUsers = [
-  { id: 1, name: "Alice Johnson" },
-  { id: 2, name: "Bob Smith" },
-  { id: 3, name: "Charlie Davis" },
-  { id: 4, name: "Diana Evans" },
-  // Add more dummy users as needed
-];
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import SendNotificationModal from "./SendNotificationModal";
+import {
+  useDeleteAdMutation,
+  useGetnotificationQuery,
+} from "../../redux/api/notificationApi";
+import { formatDate } from "../../utils/utils";
+import { toast } from "react-toastify";
 
 const NotifyMessages = () => {
-  // Notifications state
+  const { data, isFetching } = useGetnotificationQuery("");
+  const [deleteAd] = useDeleteAdMutation();
+  console.log(data);
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -33,134 +22,60 @@ const NotifyMessages = () => {
       time: moment().add(1, "day"),
       audience: "All Users",
     },
-    {
-      id: 2,
-      title: "Special Offer",
-      description: "Exclusive sale for selected users.",
-      time: null,
-      audience: "Bob Smith",
-    },
   ]);
 
-  // Modal state
   const [modalVisible, setModalVisible] = useState(false);
-  const [formValues, setFormValues] = useState({
-    title: "",
-    description: "",
-    time: null,
-    audienceType: "all", // "all" or "individual"
-    selectedUsers: [],
-  });
 
-  // Open modal and reset form
-  const openModal = () => {
-    setFormValues({
-      title: "",
-      description: "",
-      time: null,
-      audienceType: "all",
-      selectedUsers: [],
-    });
-    setModalVisible(true);
+  const openModal = () => setModalVisible(true);
+
+  const handleNewNotification = (notification) => {
+    setNotifications((prev) => [notification, ...prev]);
+    message.success("Notification sent successfully!");
   };
 
-  // Handle form input changes
-  const handleInputChange = (field, value) => {
-    setFormValues((prev) => ({ ...prev, [field]: value }));
+  const deleteNotification = async (id) => {
+    await deleteAd(id);
+    toast.success("Notification deleted!");
   };
 
-  // Add new notification handler
-  const addNotification = () => {
-    if (!formValues.title.trim() || !formValues.description.trim()) {
-      message.error("Title and description are required.");
-      return;
-    }
-
-    if (
-      formValues.audienceType === "individual" &&
-      formValues.selectedUsers.length === 0
-    ) {
-      message.error("Please select at least one user.");
-      return;
-    }
-
-    const audienceText =
-      formValues.audienceType === "all"
-        ? "All Users"
-        : formValues.selectedUsers
-            .map((id) => {
-              const user = dummyUsers.find((u) => u.id === id);
-              return user ? user.name : "";
-            })
-            .join(", ");
-
-    const newNotification = {
-      id: Date.now(),
-      title: formValues.title,
-      description: formValues.description,
-      time: formValues.time,
-      audience: audienceText,
-    };
-
-    setNotifications((prev) => [newNotification, ...prev]);
-    message.success("Notification added!");
-    setModalVisible(false);
-  };
-
-  // Delete notification
-  const deleteNotification = (id) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-    message.success("Notification deleted!");
-  };
-
-  // Reschedule notification - open modal with data loaded
-  const rescheduleNotification = (record) => {
-    setFormValues({
-      title: record.title,
-      description: record.description,
-      time: record.time,
-      audienceType: record.audience === "All Users" ? "all" : "individual",
-      selectedUsers:
-        record.audience === "All Users"
-          ? []
-          : record.audience
-              .split(", ")
-              .map((name) => {
-                const user = dummyUsers.find((u) => u.name === name);
-                return user ? user.id : null;
-              })
-              .filter(Boolean),
-    });
-    setModalVisible(true);
-
-    // Also remove the old notification; user will add new/rescheduled notification after editing
-    deleteNotification(record.id);
-  };
-
-  // Table columns
   const columns = [
     { title: "Title", dataIndex: "title", key: "title" },
     { title: "Description", dataIndex: "description", key: "description" },
     {
-      title: "Time",
-      dataIndex: "time",
-      key: "time",
-      render: (time) => (time ? time.format("YYYY-MM-DD HH:mm") : "N/A"),
+      title: "Is All Users",
+      dataIndex: "is_all_users",
+      key: "is_all_users",
+      render: (isAll, record) => {
+        if (isAll) {
+          return <span>All Users</span>;
+        }
+        // Show individual user info, e.g., user_ids or user.name if available
+        if (record.user_ids?.length) {
+          // If you have access to user details (array of user objects by user_ids), render their names/emails
+          return <span>{record.user_ids.join(", ")}</span>;
+        }
+        // Optionally show main user info if available
+        if (record.user && record.user.name) {
+          return <span>{record.user.name}</span>;
+        }
+        return <span>Specific User</span>;
+      },
     },
-    { title: "Audience", dataIndex: "audience", key: "audience" },
+
+    {
+      title: "Time",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (time) => (time ? formatDate(time) : "N/A"),
+    },
     {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
         <Space>
-          <Button onClick={() => rescheduleNotification(record)}>
-            Reschedule
-          </Button>
           <Popconfirm
-            title="Are you sure to delete this notification?"
+            title="Delete this notification?"
             onConfirm={() => deleteNotification(record.id)}
-            okText="Yes"
-            cancelText="No"
           >
             <Button danger>Delete</Button>
           </Popconfirm>
@@ -168,85 +83,28 @@ const NotifyMessages = () => {
       ),
     },
   ];
-  
-  
+
   return (
     <div style={{ padding: 24 }}>
       <PageBreadcrumb pageTitle="Notification History" />
       <Button type="primary" style={{ marginBottom: 16 }} onClick={openModal}>
-        Add New Notification
+        Send Notification
       </Button>
 
       <Table
         columns={columns}
-        dataSource={notifications}
+        dataSource={data?.data}
         rowKey="id"
         pagination={{ pageSize: 5 }}
         scroll={{ x: 1000 }}
+        loading={isFetching}
       />
 
-      <Modal
-        title="Add New Notification"
+      <SendNotificationModal
         visible={modalVisible}
         onCancel={() => setModalVisible(false)}
-        onOk={addNotification}
-        okText="Submit"
-      >
-        <Input
-          placeholder="Title"
-          value={formValues.title}
-          onChange={(e) => handleInputChange("title", e.target.value)}
-          style={{ marginBottom: 12 }}
-        />
-        <Input.TextArea
-          placeholder="Description"
-          value={formValues.description}
-          onChange={(e) => handleInputChange("description", e.target.value)}
-          rows={4}
-          style={{ marginBottom: 12 }}
-        />
-        <DatePicker
-          showTime
-          placeholder="Select time (optional)"
-          value={formValues.time}
-          onChange={(value) => handleInputChange("time", value)}
-          style={{ width: "100%", marginBottom: 12 }}
-        />
-
-        <Select
-          value={formValues.audienceType}
-          onChange={(value) => handleInputChange("audienceType", value)}
-          style={{ width: "100%", marginBottom: 12 }}
-        >
-          <Option value="all">All Users</Option>
-          <Option value="individual">Individual User(s)</Option>
-        </Select>
-
-        {formValues.audienceType === "individual" && (
-          <Select
-            mode="multiple"
-            showSearch
-            placeholder="Select user(s)"
-            optionFilterProp="children"
-            value={formValues.selectedUsers}
-            onChange={(value) => handleInputChange("selectedUsers", value)}
-            filterOption={(input, option: any) => {
-              const label = option?.children;
-              if (typeof label === "string") {
-                return label.toLowerCase().includes(input.toLowerCase());
-              }
-              return false;
-            }}
-            style={{ width: "100%" }}
-          >
-            {dummyUsers.map((user) => (
-              <Option key={user.id} value={user.id}>
-                {user.name}
-              </Option>
-            ))}
-          </Select>
-        )}
-      </Modal>
+        onSend={handleNewNotification}
+      />
     </div>
   );
 };

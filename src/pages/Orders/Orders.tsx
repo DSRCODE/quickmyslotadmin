@@ -13,9 +13,7 @@ const Orders = () => {
   const [activeRole, setActiveRole] = useState("customer");
 
   // Fetch Orderss based on active role
-  const { data, isLoading, isFetching } = useGetordersQuery({
-    role: activeRole,
-  });
+  const { data, isLoading, isFetching } = useGetordersQuery("");
 
   // Flattened Orders list
   const Orders = data?.data || [];

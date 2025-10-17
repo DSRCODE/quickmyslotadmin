@@ -16,7 +16,7 @@ export const ordersApi = createApi({
   endpoints: (builder) => ({
     // Get All orders
     getorders: builder.query({
-      query: ({ role }) => `admin/all-bookings?role=${role}`,
+      query: () => `admin/all-bookings`,
       providesTags: ["ordersApi"],
     }),
   }),
