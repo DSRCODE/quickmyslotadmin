@@ -7,38 +7,54 @@ import {
   InputNumber,
   Popconfirm,
   Card,
+  message,
 } from "antd";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { useSidebar } from "../../context/SidebarContext";
-
-// Simulate API Data
-const initialRanges = [
-  { id: 1, min: 0, max: 500, discount: 5 },
-  { id: 2, min: 501, max: 1000, discount: 7 },
-];
+import {
+  useAddDiscountMutation,
+  useGetsetDiscountQuery,
+  useDeleteAdMutation,
+  useUpdateDiscountMutation,
+} from "../../redux/api/setDiscount";
+import { Delete, Edit, Trash } from "lucide-react";
 
 const SetDiscount = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
-  const [list, setList] = useState(initialRanges);
+
+  // API hooks
+  const { data, isFetching } = useGetsetDiscountQuery("");
+  const [addDiscount, { isLoading: isAdding }] = useAddDiscountMutation();
+  const [updateDiscount, { isLoading: isUpdating }] =
+    useUpdateDiscountMutation();
+  const [deleteDiscount, { isLoading: isDeleting }] = useDeleteAdMutation();
+
+  // State
   const [isAddModal, setIsAddModal] = useState(false);
   const [isEditModal, setIsEditModal] = useState(false);
   const [currentEdit, setCurrentEdit] = useState(null);
 
-  // Handlers for Add Modal
+  // Forms
   const [addForm] = Form.useForm();
+  const [editForm] = Form.useForm();
+
+  // Handlers for Add Modal
   const showAddModal = () => setIsAddModal(true);
-  const handleAddOk = () => {
-    addForm.validateFields().then((values) => {
-      setList([
-        ...list,
-        {
-          ...values,
-          id: Math.max(0, ...list.map((l) => l.id)) + 1,
-        },
-      ]);
+  const handleAddOk = async () => {
+    try {
+      const values = await addForm.validateFields();
+      const payload = {
+        min_amount: values.min,
+        max_amount: values.max,
+        cashback_amount: values.discount,
+      };
+      await addDiscount(payload).unwrap();
+      message.success("Discount range added successfully!");
       addForm.resetFields();
       setIsAddModal(false);
-    });
+    } catch (error) {
+      message.error(error?.data?.message || "Failed to add discount.");
+    }
   };
   const handleAddCancel = () => {
     addForm.resetFields();
@@ -46,59 +62,92 @@ const SetDiscount = () => {
   };
 
   // Handlers for Edit Modal
-  const [editForm] = Form.useForm();
   const showEditModal = (record) => {
     setCurrentEdit(record);
-    editForm.setFieldsValue(record);
+    editForm.setFieldsValue({
+      min: record.min_amount,
+      max: record.max_amount,
+      discount: record.cashback_amount,
+    });
     setIsEditModal(true);
   };
-  const handleEditOk = () => {
-    editForm.validateFields().then((values) => {
-      setList(
-        list.map((item) =>
-          item.id === currentEdit.id ? { ...item, ...values } : item
-        )
-      );
+  const handleEditOk = async () => {
+    try {
+      const values = await editForm.validateFields();
+      const payload = {
+        body: {
+          min_amount: values.min,
+          max_amount: values.max,
+          cashback_amount: values.discount,
+        },
+        id: currentEdit.id,
+      };
+      await updateDiscount(payload).unwrap();
+      message.success("Discount updated successfully!");
       setIsEditModal(false);
-    });
+    } catch (error) {
+      message.error(error?.data?.message || "Failed to update discount.");
+    }
   };
   const handleEditCancel = () => setIsEditModal(false);
 
   // Delete handler
-  const handleDelete = (id) => {
-    setList(list.filter((item) => item.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await deleteDiscount({ id }).unwrap();
+      message.success("Discount deleted successfully!");
+    } catch (error) {
+      message.error(error?.data?.message || "Failed to delete discount.");
+    }
   };
 
-  // Console data on submit
-  const handleSubmit = () => {
-    console.log("Discount Ranges:", list);
-  };
-
+  // Table columns
   const columns = [
-    { title: "Min Price", dataIndex: "min", key: "min" },
-    { title: "Max Price", dataIndex: "max", key: "max" },
-    { title: "Discount (%)", dataIndex: "discount", key: "discount" },
+    { title: "Min Price", dataIndex: "min_amount", key: "min" },
+    { title: "Max Price", dataIndex: "max_amount", key: "max" },
+    { title: "Discount (%)", dataIndex: "cashback_amount", key: "discount" },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <>
+        <div style={{ display: "flex", gap: "8px" }}>
           <Button
+            type="primary"
+            icon={<Edit size={14}/>} 
             size="small"
-            style={{ marginRight: 8 }}
+            style={{
+              borderRadius: "6px",
+              background: "linear-gradient(90deg, #1677ff 0%, #4096ff 100%)",
+              border: "none",
+            }}
             onClick={() => showEditModal(record)}
           >
             Edit
           </Button>
+
           <Popconfirm
-            title="Are you sure?"
+            title="Are you sure you want to delete this discount?"
+            okText="Yes"
+            cancelText="No"
+            okButtonProps={{ danger: true }}
             onConfirm={() => handleDelete(record.id)}
           >
-            <Button danger size="small">
+            <Button
+              type="primary"
+              danger
+              icon={<Trash size={14} />}
+              size="small"
+              loading={isDeleting}
+              style={{
+                borderRadius: "6px",
+                background: "linear-gradient(90deg, #ff4d4f 0%, #ff7875 100%)",
+                border: "none",
+              }}
+            >
               Delete
             </Button>
           </Popconfirm>
-        </>
+        </div>
       ),
     },
   ];
@@ -117,15 +166,13 @@ const SetDiscount = () => {
           Add Discount Range
         </Button>
         <Table
-          dataSource={list}
+          dataSource={data?.data || []}
           columns={columns}
           rowKey="id"
           style={{ marginTop: 16 }}
           pagination={false}
+          loading={isFetching}
         />
-        {/* <Button type="default" onClick={handleSubmit} style={{ marginTop: 18 }}>
-          Submit (Console Log)
-        </Button> */}
       </Card>
 
       {/* Add Modal */}
@@ -135,32 +182,27 @@ const SetDiscount = () => {
         onOk={handleAddOk}
         onCancel={handleAddCancel}
         okText="Add"
+        confirmLoading={isAdding}
       >
         <Form form={addForm} layout="vertical">
           <Form.Item
             name="min"
             label="Min Price"
-            rules={[
-              { required: true, type: "number", message: "Enter min price" },
-            ]}
+            rules={[{ required: true, message: "Enter min price" }]}
           >
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             name="max"
             label="Max Price"
-            rules={[
-              { required: true, type: "number", message: "Enter max price" },
-            ]}
+            rules={[{ required: true, message: "Enter max price" }]}
           >
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             name="discount"
             label="Discount (%)"
-            rules={[
-              { required: true, type: "number", message: "Enter discount" },
-            ]}
+            rules={[{ required: true, message: "Enter discount" }]}
           >
             <InputNumber min={0} max={100} style={{ width: "100%" }} />
           </Form.Item>
@@ -174,32 +216,27 @@ const SetDiscount = () => {
         onOk={handleEditOk}
         onCancel={handleEditCancel}
         okText="Update"
+        confirmLoading={isUpdating}
       >
         <Form form={editForm} layout="vertical">
           <Form.Item
             name="min"
             label="Min Price"
-            rules={[
-              { required: true, type: "number", message: "Enter min price" },
-            ]}
+            rules={[{ required: true, message: "Enter min price" }]}
           >
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             name="max"
             label="Max Price"
-            rules={[
-              { required: true, type: "number", message: "Enter max price" },
-            ]}
+            rules={[{ required: true, message: "Enter max price" }]}
           >
             <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             name="discount"
             label="Discount (%)"
-            rules={[
-              { required: true, type: "number", message: "Enter discount" },
-            ]}
+            rules={[{ required: true, message: "Enter discount" }]}
           >
             <InputNumber min={0} max={100} style={{ width: "100%" }} />
           </Form.Item>
