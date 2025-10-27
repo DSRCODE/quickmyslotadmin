@@ -126,11 +126,11 @@ const FaqManagement = () => {
                 { title: "Category", dataIndex: "category" },
                 { title: "Question", dataIndex: "question" },
                 { title: "Answer", dataIndex: "answer" },
-                {
-                  title: "Active",
-                  dataIndex: "is_active",
-                  render: (is_active) => (is_active ? "Yes" : "No"),
-                },
+                // {
+                //   title: "Active",
+                //   dataIndex: "is_active",
+                //   render: (is_active) => (is_active ? "Yes" : "No"),
+                // },
                 {
                   title: "Action",
                   render: (_, record) => (

@@ -67,6 +67,7 @@ const SubscriptionManagement = () => {
       price: record.price,
       type: record.type,
       validity: record.validity,
+      valid_days: record.valid_days,
       extra: extrasArray,
       key_word: record.extra?.key_word || "",
     });
@@ -94,6 +95,7 @@ const SubscriptionManagement = () => {
       formData.append("price", values.price.toString());
       formData.append("type", values.type);
       formData.append("validity", values.validity);
+      formData.append("valid_days", values.valid_days);
 
       if (values.extra && Array.isArray(values.extra)) {
         values.extra.forEach((item, index) => {
@@ -293,6 +295,14 @@ const SubscriptionManagement = () => {
               rules={[{ required: true, message: "Please enter validity" }]}
             >
               <Input placeholder="e.g. monthly, yearly" />
+            </Form.Item>
+
+            <Form.Item
+              label="Valid Days"
+              name="valid_days"
+              rules={[{ required: true, message: "Please enter Valid Days" }]}
+            >
+              <Input placeholder="e.g. 20, 39" />
             </Form.Item>
 
             {/* Features (Extras) */}

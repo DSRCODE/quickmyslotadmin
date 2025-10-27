@@ -114,7 +114,13 @@ const Transaction = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button type="link" onClick={() => downloadSingleInvoice(record)}>
+        <Button
+          type="link"
+          onClick={() =>
+            window.open(record?.invoice_pdf, "_blank", "noopener,noreferrer")
+          }
+          disabled={!record?.invoice_pdf}
+        >
           Invoice
         </Button>
       ),

@@ -30,6 +30,7 @@ import CategoryManagement from "./pages/Category/CategoryManagement";
 import FaqManagement from "./pages/Faq/FaqManagement";
 import SubscriptionManagement from "./pages/Subscription/SunscriptionManagement";
 import BidDetails from "./pages/Bid/BidDetails";
+import SetDiscount from "./pages/SetDiscount/SetDiscount";
 
 export default function App() {
   return (
@@ -52,7 +53,10 @@ export default function App() {
             <Route index path="/" element={<Home />} />
             <Route path="/category" element={<CategoryManagement />} />
             <Route path="/bid" element={<Bid />} />
-            <Route path="/bid-details/:categoryId/:type" element={<BidDetails />} />
+            <Route
+              path="/bid-details/:categoryId/:type"
+              element={<BidDetails />}
+            />
 
             <Route path="/customer-analytics" element={<CutomersAnalytics />} />
             <Route
@@ -81,6 +85,7 @@ export default function App() {
             <Route path="/cms" element={<PrivacyPolicyPage />} />
             <Route path="/faq" element={<FaqManagement />} />
             <Route path="/subscription" element={<SubscriptionManagement />} />
+            <Route path="/set-discount" element={<SetDiscount />} />
 
             <Route path="/tickets" element={<Tickets />} />
 

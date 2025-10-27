@@ -86,7 +86,7 @@ const ProvidersManagement = () => {
     { title: "Phone", dataIndex: "phone_number" },
     { title: "Category", dataIndex: "service_category" },
     { title: "Location Served", dataIndex: "location_area_served" },
-    { title: "Cashback", dataIndex: "is_cashback" },
+    { title: "Tieup Percentage", dataIndex: "is_cashback" },
     {
       title: "Status",
       dataIndex: "is_active",
@@ -123,7 +123,7 @@ const ProvidersManagement = () => {
             style={{
               whiteSpace: "nowrap",
               width: "90px",
-              backgroundColor: "orange",
+              backgroundColor: "#AB274F",
               color: "#fff",
             }}
             onClick={() => {
@@ -131,7 +131,7 @@ const ProvidersManagement = () => {
               setIsCashbackModalOpen(true);
             }}
           >
-            Add Offer
+            Tie Up %
           </Button>
 
           <Popconfirm
@@ -182,24 +182,24 @@ const ProvidersManagement = () => {
 
       {/* ✅ Cashback Modal */}
       <Modal
-        title={`Add Cashback Offer for ${selectedProvider?.name || ""}`}
+        title={`Add Tie up % for ${selectedProvider?.name || ""}`}
         open={isCashbackModalOpen}
         onCancel={() => setIsCashbackModalOpen(false)}
         onOk={handleAddCashback}
-        okText="Add Cashback"
+        okText="Add"
         zIndex={10000}
       >
         <Form form={form} layout="vertical">
           <Form.Item
             name="cashback"
-            label="Cashback Percentage (%)"
+            label="Tie up Percentage (%)"
             rules={[
-              { required: true, message: "Please enter cashback percent" },
+              { required: true, message: "Please enter tie up percent" },
               {
                 type: "number",
                 min: 1,
                 max: 100,
-                message: "Cashback must be between 1% and 100%",
+                message: "amount must be between 1% and 100%",
               },
             ]}
           >
@@ -208,7 +208,7 @@ const ProvidersManagement = () => {
               max={100}
               formatter={(value) => `${value}%`}
               style={{ width: "100%" }}
-              placeholder="Enter cashback percent (1-100)"
+              placeholder="Enter tie up percent (1-100)"
             />
           </Form.Item>
         </Form>

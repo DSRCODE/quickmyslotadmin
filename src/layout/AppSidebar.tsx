@@ -125,6 +125,11 @@ const navItems: NavItem[] = [
     path: "/subscription",
   },
   {
+    icon: <Podcast />,
+    name: "Set Discount Percent",
+    path: "/set-discount",
+  },
+  {
     icon: <Settings />,
     name: "App Settings",
     subItems: [
@@ -210,7 +215,7 @@ const AppSidebar: React.FC = () => {
       >
         <Link to="/">
           {isExpanded || isHovered || isMobileOpen ? (
-            <div className="flex  gap-2 items-center text-primary font-bold text-[16px]">
+            <div className="flex gap-2 items-center text-primary font-bold text-[16px]">
               <img
                 className="dark:hidden"
                 src="/logo.png"
@@ -247,7 +252,7 @@ const AppSidebar: React.FC = () => {
               <HorizontaLDots className="size-6" />
             )}
           </h2>
-          <ul className="flex flex-col gap-3">
+          <ul className="flex flex-col gap-2">
             {navItems.map((nav, index) => (
               <li key={nav.name}>
                 {nav.subItems ? (
@@ -350,7 +355,7 @@ const AppSidebar: React.FC = () => {
           <div className="mt-auto px-0">
             <button
               onClick={handleLogout}
-              className={`menu-item border mb-4 group cursor-pointer w-full flex items-center gap-3 px-4 py-2 rounded-lg ${
+              className={`menu-item border mb-4 group cursor-pointer w-full flex items-center gap-2 px-4 py-2 rounded-lg ${
                 isExpanded || isHovered || isMobileOpen
                   ? "justify-start text-gray-900 hover:bg-[#EE4E34] hover:text-white"
                   : "justify-center"
