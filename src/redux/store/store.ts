@@ -20,6 +20,7 @@ import { transactionApi } from "../api/transactionApi";
 import { ordersApi } from "../api/ordersApi";
 import { notificationApi } from "../api/notificationApi";
 import { setDiscountApi } from "../api/setDiscount";
+import { dashboardApi } from "../api/dashboard";
 
 export const store = configureStore({
   reducer: {
@@ -43,6 +44,7 @@ export const store = configureStore({
     [ordersApi.reducerPath]: ordersApi.reducer,
     [notificationApi.reducerPath]: notificationApi.reducer,
     [setDiscountApi.reducerPath]: setDiscountApi.reducer,
+    [dashboardApi.reducerPath]: dashboardApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -65,5 +67,6 @@ export const store = configureStore({
       .concat(subscriptionApi.middleware)
       .concat(ordersApi.middleware)
       .concat(notificationApi.middleware)
-      .concat(setDiscountApi.middleware),
+      .concat(setDiscountApi.middleware)
+      .concat(dashboardApi.middleware),
 });

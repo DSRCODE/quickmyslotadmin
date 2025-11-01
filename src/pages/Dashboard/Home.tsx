@@ -4,8 +4,11 @@ import EcommerceMetrics from "../../components/ecommerce/EcommerceMetrics";
 import MonthlySalesChart from "../../components/ecommerce/MonthlySalesChart";
 import MonthlyTarget from "../../components/ecommerce/MonthlyTarget";
 import StatisticsChart from "../../components/ecommerce/StatisticsChart";
+import { useGetdashboardQuery } from "../../redux/api/dashboard";
 
 export default function Home() {
+  const { data } = useGetdashboardQuery("");
+  console.log(data)
   return (
     <>
       <PageMeta
@@ -52,15 +55,21 @@ export default function Home() {
       {/* Main content grid */}
       <div className="grid grid-cols-12 gap-4 md:gap-6 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
         <div className="col-span-12 space-y-6">
-          <EcommerceMetrics />
+          <EcommerceMetrics stats={data?.data} />
         </div>
 
         <div className="col-span-12 ">
-          <MonthlySalesChart title={"Monthly Users"} />
+          <MonthlySalesChart
+            title={"Monthly Users"}
+            stats={data?.data?.monthly_users_chart}
+          />
         </div>
 
         <div className="col-span-12">
-          <MonthlySalesChart title={"Monthly Providers"} />
+          <MonthlySalesChart
+            title={"Monthly Providers"}
+            stats={data?.data?.monthly_providers_chart}
+          />
         </div>
 
         {/* <div className="col-span-12"><StatisticsChart /></div> */}
