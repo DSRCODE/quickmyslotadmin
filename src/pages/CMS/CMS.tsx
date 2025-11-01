@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Spin, Tabs } from "antd";
+import { Spin, Tabs } from "antd";
 import JoditEditor from "jodit-react";
 import { useEditCmsMutation, useGetCmsQuery } from "../../redux/api/cmsApi";
 import { toast } from "react-toastify";
@@ -12,31 +12,44 @@ const CMSPrivacyEditor = ({ userType }) => {
   const [content, setContent] = useState("");
   const [selectedPolicyTab, setSelectedPolicyTab] = useState("privacy-policy");
 
-  const { data, isLoading } = useGetCmsQuery({
-    type: userType,
-    slug: selectedPolicyTab,
-  });
+  // Fetch CMS data dynamically
+  const { data, isLoading, refetch, isFetching } = useGetCmsQuery(
+    { type: userType, slug: selectedPolicyTab },
+    { refetchOnMountOrArgChange: true }
+  );
 
-  const [editCms] = useEditCmsMutation();
+  const [editCms, { isLoading: isSaving }] = useEditCmsMutation();
 
-  // Load content when fetched
+  // ✅ Update editor when API data changes
   useEffect(() => {
     if (data?.data?.body) {
-      setContent(data?.data?.body);
+      setContent(data.data.body);
+    } else {
+      setContent(""); // reset when no data
     }
-  }, [data]);
+  }, [data, selectedPolicyTab]);
+
+  // ✅ Re-fetch when userType or tab changes
+  useEffect(() => {
+    refetch();
+  }, [userType, selectedPolicyTab, refetch]);
 
   const handleSave = async () => {
-    if (!data) return;
-    const htmlContent = content;
+    console.log(data);
 
-    const formData = new FormData();
-    formData.append("id", data?.data?.id);
-    formData.append("body", htmlContent);
+    if (!data?.data?.id) {
+      toast.error("No CMS record found to update.");
+      return;
+    }
 
     try {
+      const formData = new FormData();
+      formData.append("id", data.data.id);
+      formData.append("body", content);
+
       await editCms(formData).unwrap();
       toast.success("CMS Updated Successfully");
+      refetch(); // ✅ Refresh content after save
     } catch {
       toast.error("Failed to update CMS.");
     }
@@ -44,6 +57,7 @@ const CMSPrivacyEditor = ({ userType }) => {
 
   return (
     <>
+      {/* Sub-tabs for CMS types */}
       <Tabs
         activeKey={selectedPolicyTab}
         onChange={setSelectedPolicyTab}
@@ -56,15 +70,16 @@ const CMSPrivacyEditor = ({ userType }) => {
       </Tabs>
 
       <div className="border rounded shadow-md bg-white min-h-[300px]">
-        {isLoading ? (
+        {isLoading || isFetching ? (
           <div className="flex justify-center items-center h-[300px]">
             <Spin size="large" />
           </div>
         ) : (
           <JoditEditor
+            key={selectedPolicyTab} // ✅ Force re-render when tab changes
             ref={editor}
             value={content}
-            onChange={(newContent) => setContent(newContent)}
+            onBlur={(newContent) => setContent(newContent)}
             config={{
               readonly: false,
               minHeight: 300,
@@ -95,9 +110,9 @@ const CMSPrivacyEditor = ({ userType }) => {
         onClick={handleSave}
         className="mt-6 px-4 py-2 bg-blue-500 text-white rounded font-semibold hover:bg-[#EE4E34] transition-colors text-sm"
         style={{ width: "14%" }}
-        disabled={isLoading}
+        disabled={isSaving || isLoading}
       >
-        Save
+        {isSaving ? "Saving..." : "Save"}
       </button>
     </>
   );
