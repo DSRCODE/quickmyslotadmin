@@ -8,19 +8,21 @@ import { useAuth } from "../../context/AuthContext";
 
 export default function SignInForm() {
   const { login } = useAuth();
+  const [isLoginIn, setIsLoginIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsLoginIn(true);
     const formData = new FormData();
     formData.append("email_or_phone", e.target.email.value);
     formData.append("password", e.target.password.value);
 
     const res = await login(formData);
-    console.log(res);
+    setIsLoginIn(false);
+    // console.log(res);
     navigate("/");
   };
 
@@ -92,9 +94,15 @@ export default function SignInForm() {
               <div className="w-full">
                 <button
                   type="submit"
-                  className="w-full py-3 bg-[#EE4E34] text-white font-semibold rounded-lg shadow-md hover:bg-[#d3452f] focus:outline-none focus:ring-2 focus:ring-[#EE4E34] focus:ring-opacity-75 transition duration-200 ease-in-out"
+                  disabled={isLoginIn}
+                  className={`w-full py-3 font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#EE4E34] focus:ring-opacity-75 transition duration-200 ease-in-out
+      ${
+        isLoginIn
+          ? "bg-[#EE4E34]/70 text-white cursor-not-allowed"
+          : "bg-[#EE4E34] text-white hover:bg-[#d3452f] cursor-pointer"
+      }`}
                 >
-                  Login
+                  {isLoginIn ? "Logging.." : "Login"}
                 </button>
               </div>
             </div>

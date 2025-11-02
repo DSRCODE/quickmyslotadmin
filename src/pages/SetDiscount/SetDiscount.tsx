@@ -105,7 +105,11 @@ const SetDiscount = () => {
   const columns = [
     { title: "Min Price", dataIndex: "min_amount", key: "min" },
     { title: "Max Price", dataIndex: "max_amount", key: "max" },
-    { title: "Discount (%)", dataIndex: "cashback_amount", key: "discount" },
+    {
+      title: "Discount (Fixed Amount)",
+      dataIndex: "cashback_amount",
+      key: "discount",
+    },
     {
       title: "Action",
       key: "action",
@@ -113,7 +117,7 @@ const SetDiscount = () => {
         <div style={{ display: "flex", gap: "8px" }}>
           <Button
             type="primary"
-            icon={<Edit size={14}/>} 
+            icon={<Edit size={14} />}
             size="small"
             style={{
               borderRadius: "6px",
@@ -160,7 +164,7 @@ const SetDiscount = () => {
           : "lg:pl-[0px] lg:w-[1390px]"
       } ${isMobileOpen ? "ml-0" : ""}`}
     >
-      <PageBreadcrumb pageTitle="Set Discount Percentage" />
+      <PageBreadcrumb pageTitle="Set Discount Fixed Amount" />
       <Card style={{ marginTop: 24 }}>
         <Button type="primary" onClick={showAddModal}>
           Add Discount Range
@@ -201,7 +205,7 @@ const SetDiscount = () => {
           </Form.Item>
           <Form.Item
             name="discount"
-            label="Discount (%)"
+            label="Discount (Fixed Amount)"
             rules={[{ required: true, message: "Enter discount" }]}
           >
             <InputNumber min={0} max={100} style={{ width: "100%" }} />
